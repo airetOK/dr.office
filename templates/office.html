@@ -11,6 +11,8 @@
             rel="stylesheet"
             integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
             crossorigin="anonymous">
+        <link rel="stylesheet" href="../static/font-awesome-4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../static/css/hover.css">
         <script
             src="../static/bootstrap/js/bootstrap.bundle.min.js"
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
@@ -37,7 +39,9 @@
                                 data-bs-toggle="modal"
                                 data-bs-target="#addPatientModal"
                                 aria-current="page"
-                                href="#">Додати пацієнта</a>
+                                href="#">
+                                <i class="fa fa-plus-circle fa-2x" aria-hidden="true"></i>
+                            </a>
                         </li>
                     </ul>
                     <form class="d-flex">
@@ -66,7 +70,7 @@
                     <tr>
                         <td>{{ patient['fullname'] }}</td>
                         <td>{{ patient['teeth'] }}</td>
-                        <td>{{ patient['action'] }}</td>
+                        <td>{{ patient['actions'] }}</td>
                         <td>{{ patient['price'] }}</td>
                         <td>{{ patient['date'] }}</td>
                     </tr>
