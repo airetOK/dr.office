@@ -1,49 +1,45 @@
 from werkzeug.datastructures import ImmutableMultiDict
 from datetime import datetime
+import psycopg2
+from configuration.config import load_config
 
-# mock data
-patients = [
-    {'fullname': 'Безрукавий Сергій',
-     'teeth': '16,17',
-     'actions': 'реставрація, консультація',
-     'price': 100.50,
-     'date': '2024-02-05'},
-     {'fullname': 'Пригара Іван',
-     'teeth': '46',
-     'actions': 'ендо',
-     'price': 150,
-     'date': '2024-02-06'},
-     {'fullname': 'Шевцов Богдан',
-     'teeth': '',
-     'actions': 'чистка',
-     'price': 70,
-     'date': '2024-02-06'},
-     {'fullname': 'Микита Валерія',
-     'teeth': '21,22',
-     'actions': 'реставрація',
-     'price': 180,
-     'date': '2024-02-11'},
-     {'fullname': 'Шетеля Володимир',
-     'teeth': '23',
-     'actions': 'ендо',
-     'price': 120,
-     'date': '2024-02-11'},
-     {'fullname': 'Форос Анатолій',
-     'teeth': '34',
-     'actions': 'ендо',
-     'price': 150,
-     'date': '2024-02-12'}
-]
+
+def connect():
+    try:
+        with psycopg2.connect(**load_config()) as conn:
+            return conn
+    except (psycopg2.DatabaseError, Exception) as error:
+        print(error)
 
 def add_patient(form: ImmutableMultiDict) -> None:
-    patients.append({'fullname': form['fullName'],
-                     'teeth': form['teeth'],
-                     'actions': form['actions'],
-                     'price': form['price'],
-                     'date': __get_current_date()})
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute('INSERT INTO public."patients"("fullName", teeth, actions, price, date) VALUES (%s, %s, %s, %s, %s)', 
+                (form['fullName'], form['teeth'], form['actions'], form['price'], __get_current_date()))
+    conn.commit()
+    cur.close()
+    conn.close()
 
 def get_patients() -> list[object]:
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute('SELECT id, "fullName", teeth, actions, price, date FROM public."patients"')
+    patients = __convert(cur.fetchall())
+    cur.close()
+    conn.close()
+    print(patients)
     return patients
 
 def __get_current_date() -> str:
     return datetime.today().strftime('%Y-%m-%d')
+
+def __convert(db_list) -> list[object]:
+    patients = []
+    for id, fullName, teeth, actions, price, date in db_list:
+        patients.append({'id': id,
+                     'fullname': fullName,
+                     'teeth': teeth,
+                     'actions': actions,
+                     'price': price,
+                     'date': date})
+    return patients
