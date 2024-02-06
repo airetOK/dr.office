@@ -86,12 +86,13 @@
                         <button type="button" class="btn-close"
                             data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form>
+                    <form method="POST" action="/add">
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label for="fullNameInput"
                                     class="form-label">ПІБ</label>
                                 <input type="text"
+                                    name="fullName"
                                     class="form-control"
                                     id="fullNameInput">
                             </div>
@@ -100,6 +101,7 @@
                                 <label for="teethInput"
                                     class="form-label">Зуби</label>
                                 <input type="tel"
+                                    name="teeth"
                                     class="form-control"
                                     id="teethInput">
                             </div>
@@ -108,6 +110,7 @@
                                 <label for="actionInput"
                                     class="form-label">Маніпуляції</label>
                                 <input type="text"
+                                    name="actions"
                                     class="form-control"
                                     id="actionInput">
                             </div>
@@ -140,6 +143,7 @@
                                 <label for="priceInput"
                                     class="form-label">Ціна</label>
                                 <input type="number"
+                                    name="price"
                                     step="0.01"
                                     class="form-control"
                                     id="priceInput">
