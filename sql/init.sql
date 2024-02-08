@@ -1,1 +1,1 @@
-CREATE TABLE patients(id INTEGER PRIMARY KEY, fullName NOT NULL, teeth, actions, price, date);
+CREATE TABLE IF NOT EXISTS patients(id INTEGER PRIMARY KEY, fullName NOT NULL, teeth, actions, price, date);
