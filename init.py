@@ -12,3 +12,6 @@ def office():
 def add_patient():
     pr.add_patient(request.form)
     return redirect('/')
+
+if __name__ == "__main__":
+    app.run(debug=True)

@@ -1,13 +1,9 @@
-from configparser import ConfigParser
+import os
 
-def load_config(filename='configuration/database.ini', section='postgresql'):
-    parser = ConfigParser()
-    parser.read(filename)
-    config = {}
-    if parser.has_section(section):
-        for param in parser.items(section):
-            config[param[0]] = param[1]
-    else:
-        raise Exception(f'Section {section} not found in the {filename} file')
-
-    return config
+def load_config():
+    return {
+        'host': os.environ['DB_HOST'],
+        'database': os.environ['DB_NAME'],
+        'user': os.environ['DB_USER'],
+        'password': os.environ['DB_PASSWORD']    
+    }
