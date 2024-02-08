@@ -5,6 +5,6 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 WORKDIR /dr.office
 COPY . .
-ENV FLASK_APP=init.py
+ENV FLASK_APP=app.py
 CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
 EXPOSE 5000

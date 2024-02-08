@@ -1,2 +1,2 @@
  pip install -r requirements.txt  
- flask --app init run
+ flask --app app run
