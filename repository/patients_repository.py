@@ -26,7 +26,6 @@ def get_patients() -> list[object]:
     patients = __convert(cur.fetchall())
     cur.close()
     conn.close()
-    print(patients)
     return patients
 
 def __get_current_date() -> str:
