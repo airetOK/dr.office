@@ -5,9 +5,16 @@ services:
     container_name: dr.office
     environment:
       - PYTHONUNBUFFERED=1
+      - FLASK_DEBUG=True
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - JWT_USERNAME=${JWT_USERNAME}
       - JWT_PASSWORD=${JWT_PASSWORD}
       - DB_PATH=${DB_PATH}
+      - SECRET_KEY=${SECRET_KEY}
+      - GOOGLE_PRIVATE_KEY=${GOOGLE_PRIVATE_KEY}
+      - GOOGLE_CLIENT_EMAIL=${GOOGLE_CLIENT_EMAIL}
+      - GOOGLE_SPREADSHEET_ID=${GOOGLE_SPREADSHEET_ID}
+      - GOOGLE_CELL_RANGE=${GOOGLE_CELL_RANGE}
+      - TOKEN_URI=${TOKEN_URI}
     ports:
       - 5000:8000

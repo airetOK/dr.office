@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 import os
 
-import repository.patients_repository as pr
+import service.patients_service as ps
 
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')
@@ -28,13 +28,13 @@ def login():
 @app.route("/")
 @jwt_required(locations=['cookies'])
 def office():
-    return render_template('office.html', patients=pr.get_patients())
+    return render_template('office.html', patients=ps.get_patients())
 
 
 @app.route("/add", methods=['POST'])
 @jwt_required(locations=['cookies'])
 def add_patient():
-    pr.add_patient(request.form)
+    ps.add_patient(request.form)
     return redirect('/')
 
 if __name__ == "__main__":
