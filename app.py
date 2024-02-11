@@ -10,6 +10,7 @@ app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')
 app.config["JWT_COOKIE_CSRF_PROTECT"] = True
 app.config["JWT_CSRF_CHECK_FORM"] = True
+app.config["JWT_SESSION_COOKIE"] = False
 jwt = JWTManager(app)
 
 @app.route("/login", methods=["GET", "POST"])
