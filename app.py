@@ -3,6 +3,7 @@ from flask_jwt_extended import create_access_token, set_access_cookies
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 import os
+import datetime
 
 import repository.patients_repository as pr
 
@@ -21,7 +22,7 @@ def login():
     password = request.form["password"]
     if username != os.getenv('JWT_USERNAME') or password != os.getenv('JWT_PASSWORD'):
         return jsonify({"msg": "Bad username or password"}), 401
-    access_token = create_access_token(identity=username)
+    access_token = create_access_token(identity=username, expires_delta=datetime.timedelta(days=30))
     response = make_response(redirect('/'))
     set_access_cookies(response, access_token)
     return response
