@@ -3,6 +3,7 @@ from flask_jwt_extended import create_access_token, set_access_cookies
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 import os
+import datetime
 
 import service.patients_service as ps
 
@@ -10,6 +11,7 @@ app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')
 app.config["JWT_COOKIE_CSRF_PROTECT"] = True
 app.config["JWT_CSRF_CHECK_FORM"] = True
+app.config["JWT_SESSION_COOKIE"] = False
 jwt = JWTManager(app)
 
 @app.route("/login", methods=["GET", "POST"])
@@ -20,7 +22,7 @@ def login():
     password = request.form["password"]
     if username != os.getenv('JWT_USERNAME') or password != os.getenv('JWT_PASSWORD'):
         return jsonify({"msg": "Bad username or password"}), 401
-    access_token = create_access_token(identity=username)
+    access_token = create_access_token(identity=username, expires_delta=datetime.timedelta(days=30))
     response = make_response(redirect('/'))
     set_access_cookies(response, access_token)
     return response

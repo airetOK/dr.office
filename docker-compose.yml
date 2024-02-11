@@ -5,7 +5,6 @@ services:
     container_name: dr.office
     environment:
       - PYTHONUNBUFFERED=1
-      - FLASK_DEBUG=True
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - JWT_USERNAME=${JWT_USERNAME}
       - JWT_PASSWORD=${JWT_PASSWORD}
