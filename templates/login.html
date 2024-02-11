@@ -4,15 +4,55 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Dr.Office</title>
-        <meta name="description" content="">
+        <meta name="description" content>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
+        <link
+            href="../static/bootstrap/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+            crossorigin="anonymous">
+        <link rel="stylesheet" href="../static/css/hover.css">
+        <script
+            src="../static/bootstrap/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous">
+        </script>
     </head>
     <body>
-        <form method="POST", action="/login">
-            <input type="text" name="username"/>
-            <input type="text" name="password"/>
-            <button type="submit">SUBMIT</button>
-        </form>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+                    <div class="card my-5">
+
+                        <form method="POST" action="/login"
+                            class="card-body cardbody-color p-lg-5">
+
+                            <div class="text-center">
+                                <img src="../static/images/title_pic.jpg"
+                                    class="img-fluid profile-image-pic img-thumbnail rounded-circle my-3"
+                                    width="200px" alt="profile"
+                                    style="height: 250px">
+                            </div>
+
+                            <div class="mb-3">
+                                <input type="text" name="username"
+                                    class="form-control" id="Username"
+                                    aria-describedby="emailHelp"
+                                    placeholder="Ім'я">
+                            </div>
+                            <div class="mb-3">
+                                <input type="password" name="password"
+                                    class="form-control" id="password"
+                                    placeholder="Пароль">
+                            </div>
+                            <div class="text-center"><button id="login-btn"
+                                    type="submit"
+                                    class="btn btn-color px-5 mb-5 w-100">Увійти</button></div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </body>
 </html>
