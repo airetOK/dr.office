@@ -39,5 +39,11 @@ def add_patient():
     pr.add_patient(request.form)
     return redirect('/')
 
+@app.route("/delete/<id>")
+@jwt_required(locations=['cookies'])
+def delete_patient(id):
+    pr.delete_patient(id)
+    return redirect('/')
+
 if __name__ == "__main__":
     app.run(debug=True)

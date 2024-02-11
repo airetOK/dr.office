@@ -23,6 +23,14 @@ def add_patient(form: ImmutableMultiDict) -> None:
     cur.close()
     conn.close()
 
+def delete_patient(id: str):
+    conn = __connect(os.getenv('DB_PATH'))
+    cur = conn.cursor()
+    cur.execute(f"DELETE FROM patients WHERE id = {id}")
+    conn.commit()
+    cur.close()
+    conn.close()
+
 def get_patients() -> list[object]:
     conn = __connect(os.getenv('DB_PATH'))
     cur = conn.cursor()

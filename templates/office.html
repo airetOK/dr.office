@@ -63,6 +63,7 @@
                         <th>Маніпуляція</th>
                         <th>Ціна</th>
                         <th>Дата</th>
+                        <th>Дії</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,6 +74,7 @@
                         <td>{{ patient['actions'] }}</td>
                         <td>{{ patient['price'] }}</td>
                         <td>{{ patient['date'] }}</td>
+                        <td><a href="/delete/{{ patient['id'] }}"><i class="fa fa-trash-o" aria-hidden="true"></i></a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
