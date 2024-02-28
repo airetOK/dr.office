@@ -14,7 +14,6 @@ app.config["JWT_COOKIE_CSRF_PROTECT"] = True
 app.config["JWT_CSRF_CHECK_FORM"] = True
 app.config["JWT_SESSION_COOKIE"] = False
 jwt = JWTManager(app)
-upgrade_table(os.getenv('DB_PATH'))
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -39,6 +38,14 @@ def office():
 @jwt_required(locations=['cookies'])
 def add_patient():
     pr.add_patient(request.form)
+    return redirect('/')
+
+@app.route("/update/<id>", methods=['GET', 'POST'])
+@jwt_required(locations=['cookies'])
+def update_patient(id):
+    if request.method == 'GET':
+        return render_template('update-patient.html', patient=pr.get_patient(id))
+    pr.update_patient(request.form, id)
     return redirect('/')
 
 @app.route("/delete/<id>")

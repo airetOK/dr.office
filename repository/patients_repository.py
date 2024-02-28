@@ -23,6 +23,14 @@ def add_patient(form: ImmutableMultiDict) -> None:
     cur.close()
     conn.close()
 
+def update_patient(form: ImmutableMultiDict, id: str) -> None:
+    conn = __connect(os.getenv('DB_PATH'))
+    cur = conn.cursor()
+    cur.execute(f"UPDATE patients SET fullname='{form['fullName']}', teeth='{form['teeth']}', actions='{form['actions']}', price='{form['price']}', comment='{form['comment']}', date='{__get_current_date()}' WHERE id={id}")
+    conn.commit()
+    cur.close()
+    conn.close()
+
 def delete_patient(id: str):
     conn = __connect(os.getenv('DB_PATH'))
     cur = conn.cursor()
@@ -39,6 +47,15 @@ def get_patients() -> list[object]:
     cur.close()
     conn.close()
     return patients
+
+def get_patient(id) -> object:
+    conn = __connect(os.getenv('DB_PATH'))
+    cur = conn.cursor()
+    cur.execute(f'SELECT id, fullName, teeth, actions, price, comment, date FROM patients WHERE id = {id}')
+    patient = __convert(cur.fetchall())[0]
+    cur.close()
+    conn.close()
+    return patient
 
 def __get_current_date() -> str:
     return datetime.today().strftime('%Y-%m-%d')

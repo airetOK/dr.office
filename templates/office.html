@@ -11,7 +11,8 @@
             rel="stylesheet"
             integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
             crossorigin="anonymous">
-        <link rel="stylesheet" href="../static/font-awesome-4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet"
+            href="../static/font-awesome-4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="../static/css/hover.css">
         <script
             src="../static/bootstrap/js/bootstrap.bundle.min.js"
@@ -40,7 +41,8 @@
                                 data-bs-target="#addPatientModal"
                                 aria-current="page"
                                 href="#">
-                                <i class="fa fa-plus-circle fa-2x" aria-hidden="true"></i>
+                                <i class="fa fa-plus-circle fa-2x"
+                                    aria-hidden="true"></i>
                             </a>
                         </li>
                     </ul>
@@ -76,7 +78,14 @@
                         <td>{{ patient['price'] }}</td>
                         <td>{{ patient['comment'] }}</td>
                         <td>{{ patient['date'] }}</td>
-                        <td><a href="/delete/{{ patient['id'] }}"><i class="fa fa-trash-o" aria-hidden="true"></i></a></td>
+                        <td>
+                            <a href="/delete/{{ patient['id'] }}"><i
+                                    class="fa fa-trash-o" style="color: #dc143c;"
+                                    aria-hidden="true"></i></a>
+                            <a href="/update/{{ patient['id'] }}"><i
+                                    class="fa fa-pencil"
+                                    aria-hidden="true"></i></a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
