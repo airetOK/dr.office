@@ -4,6 +4,7 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 import os
 import datetime
+from sql.upgrade_table import upgrade_table
 
 import repository.patients_repository as pr
 
@@ -13,6 +14,7 @@ app.config["JWT_COOKIE_CSRF_PROTECT"] = True
 app.config["JWT_CSRF_CHECK_FORM"] = True
 app.config["JWT_SESSION_COOKIE"] = False
 jwt = JWTManager(app)
+upgrade_table(os.getenv('DB_PATH'))
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
