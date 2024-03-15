@@ -1,9 +1,10 @@
-from flask import Flask, render_template, redirect, request, jsonify, make_response
+from flask import Flask, render_template, redirect, request, make_response
 from flask_jwt_extended import create_access_token, set_access_cookies
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 import os
 import datetime
+from werkzeug.exceptions import Unauthorized, UnprocessableEntity
 
 import repository.patients_repository as pr
 
@@ -14,14 +15,25 @@ app.config["JWT_CSRF_CHECK_FORM"] = True
 app.config["JWT_SESSION_COOKIE"] = False
 jwt = JWTManager(app)
 
+@jwt.expired_token_loader
+def expired_token_handler(arg1, arg2):
+    ''' parameters should be present in functions's signature '''
+    return redirect('/login')
+
+@jwt.invalid_token_loader
+def invalid_token_handler(arg):
+    ''' parameters should be present in functions's signature '''
+    return redirect('/login')
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == 'GET':
         return render_template('login.html')
+    
     username = request.form["username"]
     password = request.form["password"]
     if username != os.getenv('JWT_USERNAME') or password != os.getenv('JWT_PASSWORD'):
-        return jsonify({"msg": "Bad username or password"}), 401
+        return make_response(render_template('login.html'), 401)
     access_token = create_access_token(identity=username, expires_delta=datetime.timedelta(days=30))
     response = make_response(redirect('/'))
     set_access_cookies(response, access_token)
