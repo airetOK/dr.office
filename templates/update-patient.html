@@ -105,6 +105,17 @@
                         value="{{ patient['comment'] }}">
                 </div>
 
+                <div class="mb-3">
+                    <label for="dateInput"
+                        class="form-label">Дата</label>
+                    <input type="date"
+                        name="date"
+                        class="form-control"
+                        id="dateInput"
+                        value="{{ patient['date'] }}">
+                </div>
+
+
                 <div class="modal-footer">
                     <a href="/" class="btn btn-secondary" role="button">На головну</a>
                     <button type="submit" class="btn btn-primary">Зберегти</button>
