@@ -1,4 +1,7 @@
 __pycache__
+.pytest_cache
+htmlcov
+.coverage
 venv
 patients.db
 .env
