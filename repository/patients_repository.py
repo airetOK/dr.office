@@ -18,7 +18,7 @@ def __connect(path_to_db: str):
 def add_patient(form: ImmutableMultiDict) -> None:
     conn = __connect(os.getenv('DB_PATH'))
     cur = conn.cursor()
-    cur.execute(f"INSERT INTO patients(fullName, teeth, actions, price, comment, date) VALUES ('{form['fullName']}', '{form['teeth']}', '{form['actions']}', '{form['price']}', '{form['comment']}', '{__get_current_date()}')")
+    cur.execute(f"INSERT INTO patients(fullName, teeth, actions, price, comment, date) VALUES ('{form['fullName']}', '{form['teeth']}', '{form['actions']}', '{form['price']}', '{form['comment']}', '{form['date']}')")
     conn.commit()
     cur.close()
     conn.close()
@@ -57,8 +57,8 @@ def get_patient(id) -> object:
     conn.close()
     return patient
 
-def __get_current_date() -> str:
-    return datetime.today().strftime('%Y-%m-%d')
+""" def __get_current_date() -> str:
+    return datetime.today().strftime('%Y-%m-%d') """
 
 def __convert(db_list) -> list[object]:
     patients = []

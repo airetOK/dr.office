@@ -4,7 +4,6 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 import os
 import datetime
-from werkzeug.exceptions import Unauthorized, UnprocessableEntity
 
 import repository.patients_repository as pr
 
