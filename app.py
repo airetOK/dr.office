@@ -64,5 +64,10 @@ def delete_patient(id):
     pr.delete_patient(id)
     return redirect('/')
 
+@app.route("/search")
+@jwt_required(locations=['cookies'])
+def search_patients_by_full_name():
+    return render_template('office.html', patients=pr.get_patients_by_full_name(request.args.get("fullName")))
+
 if __name__ == "__main__":
     app.run(debug=True)

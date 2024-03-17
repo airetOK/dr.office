@@ -14,6 +14,7 @@
         <link rel="stylesheet"
             href="../static/font-awesome-4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="../static/css/hover.css">
+        <link rel="stylesheet" href="../static/css/common.css">
         <script
             src="../static/bootstrap/js/bootstrap.bundle.min.js"
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
@@ -34,7 +35,14 @@
                 </button>
                 <div class="collapse navbar-collapse"
                     id="navbarTogglerDemo01">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <div>
+                        <a href="/">
+                            <img src="../static/images/title_pic_zoom.jpg"
+                                class="img-fluid profile-image-pic img-thumbnail rounded-circle my-3"
+                                id="logo" alt="profile">
+                        </a>
+                    </div>
+                    <ul class="navbar-nav mb-2 mb-lg-0">
                         <li class="nav-item">
                             <a class="nav-link active"
                                 data-bs-toggle="modal"
@@ -45,13 +53,16 @@
                                     aria-hidden="true"></i>
                             </a>
                         </li>
+                        <form method="GET" action="/search" class="d-flex">
+                            <input class="form-control me-2" type="search"
+                                id="searchInput"
+                                placeholder="Введіть ім'я" name="fullName"
+                                aria-label="Search">
+                            <button class="btn btn-outline-dark"
+                                id="searchButton"
+                                type="submit">Знайти</button>
+                        </form>
                     </ul>
-                    <form class="d-flex">
-                        <input class="form-control me-2" type="search"
-                            placeholder="Пошук" aria-label="Search">
-                        <button class="btn btn-dark"
-                            type="submit">Пошук</button>
-                    </form>
                 </div>
             </div>
         </nav>
@@ -80,7 +91,8 @@
                         <td>{{ patient['date'] }}</td>
                         <td>
                             <a href="/delete/{{ patient['id'] }}"><i
-                                    class="fa fa-trash-o" style="color: #dc143c;"
+                                    class="fa fa-trash-o"
+                                    style="color: #dc143c;"
                                     aria-hidden="true"></i></a>
                             <a href="/update/{{ patient['id'] }}"><i
                                     class="fa fa-pencil"
@@ -205,6 +217,7 @@
 
         <script>
             document.querySelector('#hidden').value = document.cookie.split('=')[1];
+            document.querySelector('#dateInput').value = new Date().toISOString().split('T')[0];
         </script>
     </body>
 </html>

@@ -80,3 +80,8 @@ def test_delete_patient(client):
     client.get("/cookie_login")
     response = client.get("/delete/id")
     assert response.status_code == 302
+
+def test_search_patients_by_full_name(client):
+    client.get("/cookie_login")
+    response = client.get("/search")
+    assert response.status_code == 200

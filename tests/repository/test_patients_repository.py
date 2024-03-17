@@ -34,6 +34,14 @@ def test_get_patients(get_repository):
     get_repository.add_patient({'fullName': 'test2', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'date': '2024-01-01'})
     assert 3 == len(get_repository.get_patients())
 
+def test_get_patients_by_full_name(get_repository):
+    get_repository.add_patient({'fullName': 'NameTest', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'date': '2024-01-01'})
+    get_repository.add_patient({'fullName': 'TestNameAgain', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'date': '2024-01-01'})
+    get_repository.add_patient({'fullName': 'AnotherTestName', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'date': '2024-01-01'})
+    assert 3 == len(get_repository.get_patients_by_full_name('Test'))
+    assert 1 == len(get_repository.get_patients_by_full_name('Another'))
+    assert 0 == len(get_repository.get_patients_by_full_name('unknown'))    
+
 def test_get_patient(get_repository):
     get_repository.add_patient({'fullName': 'test', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'date': '2024-01-01'})
     assert {'id': 1, 'fullname': 'test', 'teeth': '11,12', 
