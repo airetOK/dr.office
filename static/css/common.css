@@ -1,3 +1,10 @@
+@font-face{
+font-family: blogger-font;
+src: url('Blogger_Sans.otf');
+font-weight: bold;}
+
+* {font-family: blogger-font;}
+
 .collapse {
     justify-content: space-between;
 }
@@ -22,4 +29,43 @@
 
 #searchButton {
     border-radius: 1%;
+}
+
+.fa-list {
+    color: black;
+}
+
+.upperTeethChart {
+    display: flex; 
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.lowerTeethChart {
+    display: flex; 
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.upperTeethChart img {
+    max-width:100%;
+    max-height:100%;
+}
+
+.lowerTeethChart img {
+    max-width:100%;
+    max-height:100%;
+}
+
+.teethContainer {
+    display: flex; 
+    flex-direction: column;
+}
+
+.teethContainer div a {
+    padding-left: 0%;
+}
+
+.fa-trash-o {
+    color: #dc143c;
 }

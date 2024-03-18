@@ -92,7 +92,6 @@
                         <td>
                             <a href="/delete/{{ patient['id'] }}"><i
                                     class="fa fa-trash-o"
-                                    style="color: #dc143c;"
                                     aria-hidden="true"></i></a>
                             <a href="/update/{{ patient['id'] }}"><i
                                     class="fa fa-pencil"
@@ -129,12 +128,26 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="teethInput"
-                                    class="form-label">Зуби</label>
-                                <input type="tel"
-                                    name="teeth"
-                                    class="form-control"
-                                    id="teethInput">
+                                <div class="teethContainer">
+                                    <label for="teethInput"
+                                        class="form-label">Зуби</label>
+                                    <div>
+                                        <a class="nav-link active"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#chooseTeethModal"
+                                            aria-current="page"
+                                            href="#">
+                                            <i class="fa fa-list fa-2x"
+                                                aria-hidden="true"></i>
+                                        </a>
+                                    </div>
+                                    <div>
+                                        <input type="text"
+                                            name="teeth"
+                                            class="form-control"
+                                            id="teethInput">
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="mb-3">
@@ -153,7 +166,8 @@
                                         маніпуляцію:</option>
                                     <option>Анестезія</option>
                                     <option>Вторинне ендо (ліки)</option>
-                                    <option>Вторинне ендо (пломбування)</option>
+                                    <option>Вторинне ендо
+                                        (пломбування)</option>
                                     <option>Герметизація</option>
                                     <option>Кальцій</option>
                                     <option>Консультація</option>
@@ -162,8 +176,10 @@
                                     <option>MTA</option>
                                     <option>Не прийшов</option>
                                     <option>Первинне ендо (ліки)</option>
-                                    <option>Первинне ендо (пломбування)</option>
-                                    <option>Препарування під коронку та зняття
+                                    <option>Первинне ендо
+                                        (пломбування)</option>
+                                    <option>Препарування під коронку та
+                                        зняття
                                         відбитків</option>
                                     <option>Професійна гігієна</option>
                                     <option>Реставрація зуба</option>
@@ -215,9 +231,66 @@
             </div>
         </div>
 
+        <!-- modal choose teeth window -->
+        <div class="modal fade" id="chooseTeethModal" tabindex="-1"
+            aria-labelledby="chooseTeethModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"
+                            id="chooseTeethModalLabel">Вибрати зуби</h5>
+                        <button type="button" class="btn-close"
+                            data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <div class="upperTeethChart"></div>
+                            <div class="lowerTeethChart"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-outline-dark"
+                                data-bs-dismiss="modal"
+                                aria-label="Save"
+                                onclick="saveTeeth()">Зберегти</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
             document.querySelector('#hidden').value = document.cookie.split('=')[1];
             document.querySelector('#dateInput').value = new Date().toISOString().split('T')[0];
+
+            const upperTeeth = ['18', '17', '16', '15', '14', '13', '12', '11', 
+                '21','22', '23', '24', '25', '26', '27', '28']
+            const lowerTeeth = ['48', '47', '46', '45', '44', '43', '42', '41', 
+                '31','32', '33', '34', '35', '36', '37', '38']
+            for (let tooth of upperTeeth) {
+                const div = document.createElement('div');
+                const img = document.createElement('img');
+                img.src = `../static/images/${tooth}.png`;
+                img.id = tooth;
+                img.alt = `tooth${tooth}`;
+                div.setAttribute('onclick', 'chooseTooth(' + tooth + ')');
+                div.appendChild(img);
+                document.querySelector('.upperTeethChart').appendChild(div);
+            }
+
+            for (let tooth of lowerTeeth) {
+                const div = document.createElement('div');
+                const img = document.createElement('img');
+                img.src = `../static/images/${tooth}.png`;
+                img.id = tooth;
+                img.alt = `tooth${tooth}`;
+                if (["43", "42", "41", "31", "32", "33"].includes(tooth)) {
+                    img.style.width = '7rem';
+                }
+                div.setAttribute('onclick', 'chooseTooth(' + tooth + ')');
+                div.appendChild(img);
+                document.querySelector('.lowerTeethChart').appendChild(div);
+            }
         </script>
     </body>
 </html>
