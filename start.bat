@@ -1,2 +1,3 @@
- pip install -r requirements.txt  
- flask --app init run
+coverage run -m --source=. pytest
+coverage report
+docker-compose up -d

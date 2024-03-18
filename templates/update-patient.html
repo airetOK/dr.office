@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="uk">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Dr.Office</title>
+        <meta name="description" content>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link
+            href="../static/bootstrap/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+            crossorigin="anonymous">
+        <link rel="stylesheet"
+            href="../static/font-awesome-4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../static/css/hover.css">
+        <script
+            src="../static/bootstrap/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+        <script src="../static/js/helper.js"></script>
+    </head>
+    <body>
+        <form method="POST" action="/update/{{ patient['id'] }}">
+            <input type="hidden" name="csrf_token" id="hidden">
+            <div class="modal-body">
+                <div class="modal-header">
+                    <h5 class="modal-title">Оновити пацієнта</h5>
+                </div>
+                <div class="mb-3">
+                    <label for="fullNameInput"
+                        class="form-label">ПІБ</label>
+                    <input type="text"
+                        name="fullName"
+                        class="form-control"
+                        id="fullNameInput"
+                        value="{{ patient['fullname'] }}"
+                        required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="teethInput"
+                        class="form-label">Зуби</label>
+                    <input type="tel"
+                        name="teeth"
+                        class="form-control"
+                        id="teethInput"
+                        value="{{ patient['teeth'] }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="actionInput"
+                        class="form-label">Маніпуляції</label>
+                    <input type="text"
+                        name="actions"
+                        class="form-control"
+                        id="actionInput"
+                        value="{{ patient['actions'] }}">
+                </div>
+                <div class="mb-3">
+                    <select class="form-select"
+                        id="actionSelect"
+                        onchange="appendSelectedValueToInput('#actionInput', '#actionSelect')">
+                        <option selected>Вибрати
+                            маніпуляцію:</option>
+                        <option>Анестезія</option>
+                        <option>Вторинне ендо (ліки)</option>
+                        <option>Вторинне ендо (пломбування)</option>
+                        <option>Консультація</option>
+                        <option>Корекція реставрації</option>
+                        <option>Кофердам</option>
+                        <option>MTA</option>
+                        <option>Не прийшов</option>
+                        <option>Первинне ендо (ліки)</option>
+                        <option>Первинне ендо (пломбування)</option>
+                        <option>Препарування під коронку та зняття
+                            відбитків</option>
+                        <option>Професійна гігієна</option>
+                        <option>Реставрація зуба</option>
+                        <option>Скловолоконний штифт</option>
+                        <option>Фіксація м/к коронки</option>
+                        <option>Фіксація цирконієвої
+                            коронки</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="priceInput"
+                        class="form-label">Ціна</label>
+                    <input type="number"
+                        name="price"
+                        step="0.01"
+                        class="form-control"
+                        id="priceInput"
+                        value="{{ patient['price'] }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="commentInput"
+                        class="form-label">Коментар</label>
+                    <input type="text"
+                        name="comment"
+                        class="form-control"
+                        id="commentInput"
+                        value="{{ patient['comment'] }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="dateInput"
+                        class="form-label">Дата</label>
+                    <input type="date"
+                        name="date"
+                        class="form-control"
+                        id="dateInput"
+                        value="{{ patient['date'] }}">
+                </div>
+
+
+                <div class="modal-footer">
+                    <a href="/" class="btn btn-secondary" role="button">На головну</a>
+                    <button type="submit" class="btn btn-primary">Зберегти</button>
+                </div>
+            </div>
+        </form>
+
+        <script>
+            document.querySelector('#hidden').value = document.cookie.split('=')[1];
+        </script>
+    </body>
+</html>

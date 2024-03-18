@@ -1,1 +1,0 @@
-CREATE TABLE patients(id INTEGER PRIMARY KEY, fullName NOT NULL, teeth, actions, price, date);

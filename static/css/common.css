@@ -1,0 +1,25 @@
+.collapse {
+    justify-content: space-between;
+}
+
+#searchInput {
+    border: 0;
+    outline: 0;
+    border-radius: 0px;
+    border-bottom: solid black;
+    background-color: #f8f9fa;
+    border-width: thin;
+}
+
+#logo {
+    height: 4rem;
+    width: 5rem;
+}
+
+.navbar-collapse {
+    text-align: center;
+}
+
+#searchButton {
+    border-radius: 1%;
+}
