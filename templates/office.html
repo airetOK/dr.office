@@ -284,9 +284,6 @@
                 img.src = `../static/images/${tooth}.png`;
                 img.id = tooth;
                 img.alt = `tooth${tooth}`;
-                if (["43", "42", "41", "31", "32", "33"].includes(tooth)) {
-                    img.style.width = '7rem';
-                }
                 div.setAttribute('onclick', 'chooseTooth(' + tooth + ')');
                 div.appendChild(img);
                 document.querySelector('.lowerTeethChart').appendChild(div);
