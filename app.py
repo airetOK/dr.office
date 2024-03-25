@@ -24,6 +24,11 @@ def invalid_token_handler(arg):
     ''' parameters should be present in functions's signature '''
     return redirect('/login')
 
+@jwt.unauthorized_loader
+def missing_token_handler(arg):
+    ''' parameters should be present in functions's signature '''
+    return redirect('/login')
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == 'GET':
