@@ -9,18 +9,18 @@ function appendSelectedValueToInput(inputId, selectId) {
 
 function chooseTooth(tooth_num) {
     const tooth_img = document.getElementById(tooth_num);
-    if (tooth_img.style.opacity == 0.5) {
-        tooth_img.style.opacity = 1;
+    if (tooth_img.src.endsWith(tooth_num + 'g.png')) {
+        tooth_img.src = '../static/images/' + tooth_num + '.png';
     } else {
-        tooth_img.style.opacity = 0.5;
+        tooth_img.src = '../static/images/' + tooth_num + 'g.png';
     }
 }
 
 function saveTeeth() {
     let teethStr = '';
     for (let img of document.getElementsByTagName('img')) {
-        if (img.style.opacity == 0.5) {
-            img.style.opacity = 1;
+        if (img.src.endsWith(img.id + 'g.png')) {
+            img.src = '../static/images/' + img.id + '.png';
             teethStr = teethStr + img.id + ' ';
         }
     }
