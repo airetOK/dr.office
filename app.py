@@ -15,6 +15,8 @@ app.config["JWT_COOKIE_CSRF_PROTECT"] = True
 app.config["JWT_CSRF_CHECK_FORM"] = True
 app.config["JWT_SESSION_COOKIE"] = False
 jwt = JWTManager(app)
+''' upgrade_table should be removed frop app.py if it not required'''
+upgrade_table(os.getenv('DB_PATH'))
 
 @jwt.expired_token_loader
 def expired_token_handler(arg1, arg2):
@@ -77,6 +79,4 @@ def search_patients_by_full_name():
     return render_template('office.html', patients=pr.get_patients_by_full_name(request.args.get("fullName")), languages=get_language_names())
 
 if __name__ == "__main__":
-    ''' upgrade_table should be removed frop app.py if it not required'''
-    upgrade_table(os.getenv('DB_PATH'))
     app.run(debug=True)
