@@ -7,7 +7,6 @@ import datetime
 
 import repository.patients_repository as pr
 from util.language import get_language_names
-from sql.upgrade_table import upgrade_table
 
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')
@@ -15,8 +14,6 @@ app.config["JWT_COOKIE_CSRF_PROTECT"] = True
 app.config["JWT_CSRF_CHECK_FORM"] = True
 app.config["JWT_SESSION_COOKIE"] = False
 jwt = JWTManager(app)
-''' upgrade_table should be removed frop app.py if it not required'''
-upgrade_table(os.getenv('DB_PATH'))
 
 @jwt.expired_token_loader
 def expired_token_handler(arg1, arg2):
