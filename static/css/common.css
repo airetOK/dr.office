@@ -69,3 +69,7 @@ font-weight: bold;}
 .fa-trash-o {
     color: #dc143c;
 }
+
+.countryFlag {
+    height: 2rem;
+}

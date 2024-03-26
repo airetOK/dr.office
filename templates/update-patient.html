@@ -121,6 +121,22 @@
                 </div>
 
                 <div class="mb-3">
+                    <label for="languageInput"
+                        class="form-label">Мова</label>
+                    <input type="text"
+                        name="language"
+                        list="languages" 
+                        class="form-control"
+                        id="languageInput"
+                        value="{{ patient['language'] }}">
+                    <datalist id="languages">
+                        {% for language in languages %}
+                            <option value="{{ language }}">
+                        {% endfor %}
+                    </datalist>
+                </div> 
+
+                <div class="mb-3">
                     <label for="dateInput"
                         class="form-label">Дата</label>
                     <input type="date"
