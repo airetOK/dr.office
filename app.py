@@ -6,6 +6,8 @@ import os
 import datetime
 
 import repository.patients_repository as pr
+from util.language import get_language_names
+from sql.upgrade_table import upgrade_table
 
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')
@@ -46,7 +48,7 @@ def login():
 @app.route("/")
 @jwt_required(locations=['cookies'])
 def office():
-    return render_template('office.html', patients=pr.get_patients())
+    return render_template('office.html', patients=pr.get_patients(), languages=get_language_names())
 
 
 @app.route("/add", methods=['POST'])
@@ -59,7 +61,7 @@ def add_patient():
 @jwt_required(locations=['cookies'])
 def update_patient(id):
     if request.method == 'GET':
-        return render_template('update-patient.html', patient=pr.get_patient(id))
+        return render_template('update-patient.html', patient=pr.get_patient(id), languages=get_language_names())
     pr.update_patient(request.form, id)
     return redirect('/')
 
@@ -72,7 +74,9 @@ def delete_patient(id):
 @app.route("/search")
 @jwt_required(locations=['cookies'])
 def search_patients_by_full_name():
-    return render_template('office.html', patients=pr.get_patients_by_full_name(request.args.get("fullName")))
+    return render_template('office.html', patients=pr.get_patients_by_full_name(request.args.get("fullName")), languages=get_language_names())
 
 if __name__ == "__main__":
+    ''' upgrade_table should be removed frop app.py if it not required'''
+    upgrade_table(os.getenv('DB_PATH'))
     app.run(debug=True)
