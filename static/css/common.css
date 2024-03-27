@@ -27,7 +27,7 @@ font-weight: bold;}
     text-align: center;
 }
 
-#searchButton {
+.btn {
     border-radius: 1%;
 }
 
