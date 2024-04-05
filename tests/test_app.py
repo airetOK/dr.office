@@ -32,6 +32,11 @@ def test_get_login_page(client):
     response = client.get("/login")
     assert b"title_pic.jpg" in response.data
 
+def test_get_missing_token(client):
+    response = client.get("/")
+    assert response.status_code == 302
+    assert response.location == "/login"
+
 def test_login_unauthorized(client):
     response = client.post("/login", data={
         "username": "undefined",
@@ -45,6 +50,7 @@ def test_login(client):
         "password": "test_pass",
     })
     assert response.status_code == 302
+    assert response.location == "/"
 
 def test_get_office_page(client):
     client.get("/cookie_login")
@@ -59,6 +65,7 @@ def test_add_patient(client):
         "csrf_token": resp.headers.getlist('Set-Cookie')[1].replace('csrf_access_token=', '').split(';', 1)[0]
     })
     assert response.status_code == 302
+    assert response.location == "/"
 
 @patch('repository.patients_repository.get_patient', Mock())
 def test_get_update_patient_page(client):
@@ -74,14 +81,26 @@ def test_update_patient(client):
         "csrf_token": resp.headers.getlist('Set-Cookie')[1].replace('csrf_access_token=', '').split(';', 1)[0]
     })
     assert response.status_code == 302
+    assert response.location == "/"
 
 @patch('repository.patients_repository.delete_patient', Mock())
 def test_delete_patient(client):
     client.get("/cookie_login")
     response = client.get("/delete/id")
     assert response.status_code == 302
+    assert response.location == "/"
 
 def test_search_patients_by_full_name(client):
     client.get("/cookie_login")
     response = client.get("/search")
+    assert response.status_code == 200
+
+def test_get_page(client):
+    client.get("/cookie_login")
+    response = client.get("/page/1")
+    assert response.status_code == 200
+
+def test_get_search_page(client):
+    client.get("/cookie_login")
+    response = client.get("/search/page/1?fullName=test")
     assert response.status_code == 200

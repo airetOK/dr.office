@@ -4,6 +4,7 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 import os
 import datetime
+import math
 
 import repository.patients_repository as pr
 from util.language import get_language_names
@@ -47,7 +48,21 @@ def login():
 @app.route("/")
 @jwt_required(locations=['cookies'])
 def office():
-    return render_template('office.html', patients=pr.get_patients(), languages=get_language_names())
+    return render_template('office.html', 
+                           patients=pr.get_patients(skip=0), 
+                           languages=get_language_names(),
+                           total_pages=math.ceil(float(pr.get_patients_count()/10)),
+                           current_page=1)
+
+@app.route("/page/<page>")
+@jwt_required(locations=['cookies'])
+def move_to_page(page):
+    skip = int(page)*10 - 10
+    return render_template('office.html', 
+                           patients=pr.get_patients(skip=str(skip)), 
+                           languages=get_language_names(),
+                           total_pages=math.ceil(float(pr.get_patients_count()/10)),
+                           current_page=int(page))
 
 
 @app.route("/add", methods=['POST'])
@@ -60,7 +75,8 @@ def add_patient():
 @jwt_required(locations=['cookies'])
 def update_patient(id):
     if request.method == 'GET':
-        return render_template('update-patient.html', patient=pr.get_patient(id), languages=get_language_names())
+        return render_template('update-patient.html', patient=pr.get_patient(id), 
+                               languages=get_language_names())
     pr.update_patient(request.form, id)
     return redirect('/')
 
@@ -73,7 +89,24 @@ def delete_patient(id):
 @app.route("/search")
 @jwt_required(locations=['cookies'])
 def search_patients_by_full_name():
-    return render_template('office.html', patients=pr.get_patients_by_full_name(request.args.get("fullName")), languages=get_language_names())
+    full_name = request.args.get("fullName")
+    return render_template('search-office.html', patients=pr.get_patients_by_full_name(full_name, 0),
+                           total_pages=math.ceil(float(pr.get_patients_by_full_name_count(full_name)/10)),
+                           full_name=full_name,
+                           current_page=1,
+                           languages=get_language_names())
+
+@app.route("/search/page/<page>")
+@jwt_required(locations=['cookies'])
+def move_to_search_page(page):
+    full_name = request.args.get("fullName")
+    skip = int(page)*10 - 10
+    return render_template('search-office.html', 
+                           patients=pr.get_patients_by_full_name(full_name, str(skip)), 
+                           languages=get_language_names(),
+                           total_pages=math.ceil(float(pr.get_patients_by_full_name_count(full_name)/10)),
+                           full_name=full_name,
+                           current_page=int(page))
 
 if __name__ == "__main__":
     app.run(debug=True)
