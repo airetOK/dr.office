@@ -73,3 +73,18 @@ font-weight: bold;}
 .countryFlag {
     height: 2rem;
 }
+
+.page-container {
+    display: flex;
+    justify-content: space-around;
+}
+
+.page-container a{
+    color: black;
+}
+
+.disabled {
+    pointer-events: none;
+    cursor: default;
+    opacity: 0.2;
+}

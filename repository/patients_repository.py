@@ -3,6 +3,7 @@ import sqlite3
 import os
 from util.language import get_svg_name_by_language
 
+LIMIT = 10
 
 def __connect(path_to_db: str):
     with sqlite3.connect(path_to_db) as conn:
@@ -47,11 +48,11 @@ def delete_patient(id: str):
         cur.close()
         conn.close()
 
-def get_patients() -> list[object]:
+def get_patients(skip: str) -> list[object]:
     try:
         conn = __connect(os.getenv('DB_PATH'))
         cur = conn.cursor()
-        cur.execute('SELECT id, fullName, teeth, actions, price, comment, language, date FROM patients ORDER BY id DESC')
+        cur.execute(f'SELECT id, fullName, teeth, actions, price, comment, language, date FROM patients ORDER BY id DESC LIMIT {LIMIT} OFFSET {skip}')
         patients = __convert(cur.fetchall())
     except (Exception) as error:
         print(error)
@@ -60,11 +61,11 @@ def get_patients() -> list[object]:
         conn.close()
     return patients
 
-def get_patients_by_full_name(full_name) -> list[object]:
+def get_patients_by_full_name(full_name, skip) -> list[object]:
     try:
         conn = __connect(os.getenv('DB_PATH'))
         cur = conn.cursor()
-        cur.execute(f'SELECT id, fullName, teeth, actions, price, comment, language, date FROM patients WHERE fullName LIKE \'%{full_name}%\' ORDER BY id DESC')
+        cur.execute(f'SELECT id, fullName, teeth, actions, price, comment, language, date FROM patients WHERE fullName LIKE \'%{full_name}%\' ORDER BY id DESC LIMIT {LIMIT} OFFSET {skip}')
         patients = __convert(cur.fetchall())
     except (Exception) as error:
         print(error)
@@ -77,7 +78,7 @@ def get_patient(id) -> object:
     try:
         conn = __connect(os.getenv('DB_PATH'))
         cur = conn.cursor()
-        cur.execute(f'SELECT id, fullName, teeth, actions, price, comment, language, date FROM patients WHERE id = {id} ORDER BY id DESC')
+        cur.execute(f'SELECT id, fullName, teeth, actions, price, comment, language, date FROM patients WHERE id = {id}')
         patient = __convert(cur.fetchall())[0]
     except (Exception) as error:
         print(error)
@@ -85,6 +86,32 @@ def get_patient(id) -> object:
         cur.close()
         conn.close()
     return patient
+
+def get_patients_count() -> int:
+    try:
+        conn = __connect(os.getenv('DB_PATH'))
+        cur = conn.cursor()
+        cur.execute('SELECT COUNT(*) FROM patients')
+        count = cur.fetchone()[0]
+    except (Exception) as error:
+        print(error)
+    finally:
+        cur.close()
+        conn.close()
+    return count
+
+def get_patients_by_full_name_count(full_name) -> int:
+    try:
+        conn = __connect(os.getenv('DB_PATH'))
+        cur = conn.cursor()
+        cur.execute(f'SELECT COUNT(*) FROM patients WHERE fullName LIKE \'%{full_name}%\' ORDER BY id DESC')
+        count = cur.fetchone()[0]
+    except (Exception) as error:
+        print(error)
+    finally:
+        cur.close()
+        conn.close()
+    return count
 
 def __convert(db_list) -> list[object]:
     patients = []

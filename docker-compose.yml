@@ -2,6 +2,7 @@ version: '2.1'
 services:
   dr.office:
     build: .
+    image: dr.office
     container_name: dr.office
     environment:
       - PYTHONUNBUFFERED=1
@@ -11,3 +12,14 @@ services:
       - DB_PATH=${DB_PATH}
     ports:
       - 5000:8000
+  dr.office-e2e:
+    image: dr.office
+    container_name: dr.office-e2e
+    environment:
+      - PYTHONUNBUFFERED=1
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_USERNAME=${JWT_USERNAME}
+      - JWT_PASSWORD=${JWT_PASSWORD}
+      - DB_PATH=${DB_PATH}
+    ports:
+      - 5002:8000
