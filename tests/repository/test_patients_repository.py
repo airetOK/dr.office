@@ -2,7 +2,6 @@ import pytest
 import sqlite3
 import repository.patients_repository as pr
 import os
-from datetime import datetime
 
 DB_PATH = 'tests/repository/test.db'
 
@@ -32,15 +31,17 @@ def test_get_patients(get_repository):
     get_repository.add_patient({'fullName': 'test', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'})
     get_repository.add_patient({'fullName': 'test2', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'})
     get_repository.add_patient({'fullName': 'test2', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'})
-    assert 3 == len(get_repository.get_patients())
+    assert 3 == len(get_repository.get_patients(skip=0))
+    assert 0 == len(get_repository.get_patients(skip=3))
 
 def test_get_patients_by_full_name(get_repository):
     get_repository.add_patient({'fullName': 'NameTest', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'})
     get_repository.add_patient({'fullName': 'TestNameAgain', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'})
     get_repository.add_patient({'fullName': 'AnotherTestName', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'})
-    assert 3 == len(get_repository.get_patients_by_full_name('Test'))
-    assert 1 == len(get_repository.get_patients_by_full_name('Another'))
-    assert 0 == len(get_repository.get_patients_by_full_name('unknown'))    
+    assert 3 == len(get_repository.get_patients_by_full_name('Test', skip=0))
+    assert 0 == len(get_repository.get_patients_by_full_name('Test', skip=3))
+    assert 1 == len(get_repository.get_patients_by_full_name('Another', skip=0))
+    assert 0 == len(get_repository.get_patients_by_full_name('unknown', skip=0))    
 
 def test_get_patient(get_repository):
     get_repository.add_patient({'fullName': 'test', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'})
@@ -69,6 +70,14 @@ def test_get_patient_lang_svg(get_repository):
     assert {'id': 4, 'fullname': 'test', 'teeth': '11,12', 
             'actions': 'test', 'price': '120', 'comment': 'test', 'lang_svg': 'unknown',
             'language': '', 'date': '2024-01-01'} == get_repository.get_patient(4)
+
+def test_get_patients_only_one_record_return(get_repository):
+    for i in range(0, 20):
+        get_repository.add_patient({'fullName': 'test', 'teeth': '11,12', 'actions': 'test', 'price': '120', 
+                                'comment': 'test', 'language': '', 'date': '2024-01-01'})
+    
+    assert 1 == len(get_repository.get_patients_by_full_name('test', skip=19))
+    assert 10 == len(get_repository.get_patients_by_full_name('test', skip=5))
 
 
 def __get_patient(id):

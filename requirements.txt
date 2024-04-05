@@ -3,3 +3,4 @@ gunicorn==21.2.0
 flask-jwt-extended==4.6.0
 coverage==7.4.3
 pytest==8.0.2
+pytest-playwright==0.4.4
