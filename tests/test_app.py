@@ -4,12 +4,15 @@ from flask_jwt_extended import create_access_token, set_access_cookies
 from app import app
 from flask import jsonify
 from unittest.mock import patch, Mock
+import repository.users_repository as ur
 
+DB_PATH = 'tests/repository/test.db'
 
 @pytest.fixture()
 def client():
-    os.environ["JWT_USERNAME"] = "test_name"
-    os.environ["JWT_PASSWORD"] = "test_pass"
+    os.environ["DB_PATH"] = DB_PATH
+    ur.__connect(DB_PATH)
+    ur.add_user({'username': 'user', 'password': 'test'})
     app.config.update({
         "TESTING": True,
         "JWT_SECRET_KEY": "secret",
@@ -24,7 +27,7 @@ def client():
 @app.route("/cookie_login", methods=["GET"])
 def cookie_login():
     resp = jsonify(login=True)
-    access_token = create_access_token("test_name")
+    access_token = create_access_token("user")
     set_access_cookies(resp, access_token)
     return resp
 
@@ -44,10 +47,11 @@ def test_login_unauthorized(client):
     })
     assert response.status_code == 401
 
+@patch('repository.users_repository.is_user_exists', Mock(return_value=True))
 def test_login(client):
     response = client.post("/login", data={
-        "username": "test_name",
-        "password": "test_pass",
+        "username": "user",
+        "password": "test",
     })
     assert response.status_code == 302
     assert response.location == "/"
