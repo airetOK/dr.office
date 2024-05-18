@@ -3,7 +3,10 @@ import sqlite3
 import repository.users_repository as ur
 import os
 
+from util.password_encryptor import PasswordEncryptor
+
 DB_PATH = 'tests/repository/test.db'
+password_encryptor = PasswordEncryptor()
 
 @pytest.fixture
 def get_repository():
@@ -14,8 +17,12 @@ def get_repository():
 def test_add_user(get_repository):
     get_repository.add_user({'id': 1, 'username': 'user', 'password': 'test'})
     get_repository.add_user({'id': 2, 'username': 'user2', 'password': 'test2'})
-    assert (1, 'user', 'test') == __get_user(1)
-    assert (2, 'user2', 'test2') == __get_user(2)
+    assert 1 == __get_user(1)[0]
+    assert 'user' == __get_user(1)[1]
+    assert password_encryptor.encrypt('test') == __get_user(1)[2]
+    assert 2 == __get_user(2)[0]
+    assert 'user2' == __get_user(2)[1]
+    assert password_encryptor.encrypt('test2') == __get_user(2)[2]
 
 def test_get_id_by_username(get_repository):
     get_repository.add_user({'id': 1, 'username': 'user', 'password': 'test'})

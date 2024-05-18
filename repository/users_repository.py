@@ -2,6 +2,9 @@ from werkzeug.datastructures import ImmutableMultiDict
 import sqlite3
 import os
 
+from util.password_encryptor import PasswordEncryptor
+
+password_encryptor = PasswordEncryptor()
 
 def __connect(path_to_db: str):
     with sqlite3.connect(path_to_db) as conn:
@@ -14,7 +17,8 @@ def add_user(form: ImmutableMultiDict) -> None:
     try:
         conn = __connect(os.getenv('DB_PATH'))
         cur = conn.cursor()
-        cur.execute(f"INSERT INTO users(username, password) VALUES ('{form['username']}', '{form['password']}')")
+        cur.execute(f'''INSERT INTO users(username, password) 
+                    VALUES ('{form['username']}', '{ password_encryptor.encrypt(form['password']) }')''')
         conn.commit()
     except (Exception) as error:
         print(error)
@@ -40,7 +44,10 @@ def is_user_exists(username, password) -> object:
     try:
         conn = __connect(os.getenv('DB_PATH'))
         cur = conn.cursor()
-        cur.execute(f"SELECT EXISTS(SELECT 1 FROM users WHERE username='{username}' and password='{password}' LIMIT 1)")
+        cur.execute(f'''SELECT EXISTS(SELECT 1 
+                    FROM users 
+                    WHERE username='{username}' and password='{password_encryptor.encrypt(password)}' 
+                    LIMIT 1)''')
         if cur.fetchone()[0] != 0:
             is_user_exists = True
     except (Exception) as error:
