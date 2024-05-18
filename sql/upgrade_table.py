@@ -13,8 +13,6 @@ def upgrade_table(path_to_db):
             conn.commit()
             cur.execute('ALTER TABLE patients ADD COLUMN user_id INTEGER REFERENCES users(id) default 1')
             conn.commit()
-            cur.execute(f"INSERT INTO users(username, password) VALUES ('user2', 'test2')")
-            conn.commit()
         except Exception as e:
             print(str(e))
         finally:
