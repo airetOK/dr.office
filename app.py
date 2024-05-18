@@ -1,13 +1,15 @@
 from flask import Flask, render_template, redirect, request, make_response
 from flask_jwt_extended import create_access_token, set_access_cookies
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_jwt_extended import JWTManager
 import os
 import datetime
 import math
 
 import repository.patients_repository as pr
+import repository.users_repository as ur
 from util.language import get_language_names
+from sql.upgrade_table import upgrade_table
 
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')
@@ -15,6 +17,7 @@ app.config["JWT_COOKIE_CSRF_PROTECT"] = True
 app.config["JWT_CSRF_CHECK_FORM"] = True
 app.config["JWT_SESSION_COOKIE"] = False
 jwt = JWTManager(app)
+upgrade_table(os.getenv('DB_PATH'))
 
 @jwt.expired_token_loader
 def expired_token_handler(arg1, arg2):
@@ -38,7 +41,7 @@ def login():
     
     username = request.form["username"]
     password = request.form["password"]
-    if username != os.getenv('JWT_USERNAME') or password != os.getenv('JWT_PASSWORD'):
+    if not ur.is_user_exists(username, password):
         return make_response(render_template('login.html'), 401)
     access_token = create_access_token(identity=username, expires_delta=datetime.timedelta(days=30))
     response = make_response(redirect('/'))
@@ -48,50 +51,56 @@ def login():
 @app.route("/")
 @jwt_required(locations=['cookies'])
 def office():
+    user_id = ur.get_id_by_username(get_jwt_identity())
     return render_template('office.html', 
-                           patients=pr.get_patients(skip=0), 
+                           patients=pr.get_patients(user_id, skip=0), 
                            languages=get_language_names(),
-                           total_pages=math.ceil(float(pr.get_patients_count()/10)),
+                           total_pages=math.ceil(float(pr.get_patients_count(user_id)/10)),
                            current_page=1)
 
 @app.route("/page/<page>")
 @jwt_required(locations=['cookies'])
 def move_to_page(page):
+    user_id = ur.get_id_by_username(get_jwt_identity())
     skip = int(page)*10 - 10
     return render_template('office.html', 
-                           patients=pr.get_patients(skip=str(skip)), 
+                           patients=pr.get_patients(user_id, skip=str(skip)), 
                            languages=get_language_names(),
-                           total_pages=math.ceil(float(pr.get_patients_count()/10)),
+                           total_pages=math.ceil(float(pr.get_patients_count(user_id)/10)),
                            current_page=int(page))
 
 
 @app.route("/add", methods=['POST'])
 @jwt_required(locations=['cookies'])
 def add_patient():
-    pr.add_patient(request.form)
+    user_id = ur.get_id_by_username(get_jwt_identity())
+    pr.add_patient(request.form, user_id)
     return redirect('/')
 
 @app.route("/update/<id>", methods=['GET', 'POST'])
 @jwt_required(locations=['cookies'])
 def update_patient(id):
+    user_id = ur.get_id_by_username(get_jwt_identity())
     if request.method == 'GET':
-        return render_template('update-patient.html', patient=pr.get_patient(id), 
+        return render_template('update-patient.html', patient=pr.get_patient(id, user_id), 
                                languages=get_language_names())
-    pr.update_patient(request.form, id)
+    pr.update_patient(request.form, id, user_id)
     return redirect('/')
 
 @app.route("/delete/<id>")
 @jwt_required(locations=['cookies'])
 def delete_patient(id):
-    pr.delete_patient(id)
+    user_id = ur.get_id_by_username(get_jwt_identity())
+    pr.delete_patient(id, user_id)
     return redirect('/')
 
 @app.route("/search")
 @jwt_required(locations=['cookies'])
 def search_patients_by_full_name():
+    user_id = ur.get_id_by_username(get_jwt_identity())
     full_name = request.args.get("fullName")
-    return render_template('search-office.html', patients=pr.get_patients_by_full_name(full_name, 0),
-                           total_pages=math.ceil(float(pr.get_patients_by_full_name_count(full_name)/10)),
+    return render_template('search-office.html', patients=pr.get_patients_by_full_name(full_name, 0, user_id),
+                           total_pages=math.ceil(float(pr.get_patients_by_full_name_count(full_name, user_id)/10)),
                            full_name=full_name,
                            current_page=1,
                            languages=get_language_names())
@@ -99,12 +108,13 @@ def search_patients_by_full_name():
 @app.route("/search/page/<page>")
 @jwt_required(locations=['cookies'])
 def move_to_search_page(page):
+    user_id = ur.get_id_by_username(get_jwt_identity())
     full_name = request.args.get("fullName")
     skip = int(page)*10 - 10
     return render_template('search-office.html', 
-                           patients=pr.get_patients_by_full_name(full_name, str(skip)), 
+                           patients=pr.get_patients_by_full_name(full_name, str(skip), user_id), 
                            languages=get_language_names(),
-                           total_pages=math.ceil(float(pr.get_patients_by_full_name_count(full_name)/10)),
+                           total_pages=math.ceil(float(pr.get_patients_by_full_name_count(full_name, user_id)/10)),
                            full_name=full_name,
                            current_page=int(page))
 

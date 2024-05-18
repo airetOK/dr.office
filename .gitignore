@@ -5,3 +5,5 @@ htmlcov
 venv
 patients.db
 .env
+.idea
+tests/repository/test.db
