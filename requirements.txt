@@ -4,3 +4,4 @@ flask-jwt-extended==4.6.0
 coverage==7.4.3
 pytest==8.0.2
 pytest-playwright==0.4.4
+python-dotenv==1.0.1

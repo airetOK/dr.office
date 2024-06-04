@@ -11,12 +11,16 @@
             rel="stylesheet"
             integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
             crossorigin="anonymous">
+        <link rel="stylesheet"
+            href="../static/font-awesome-4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="../static/css/hover.css">
+        <link rel="stylesheet" href="../static/css/common.css">
         <script
             src="../static/bootstrap/js/bootstrap.bundle.min.js"
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous">
         </script>
+        <script src="../static/js/helper.js"></script>
     </head>
     <body>
         <div class="container">
@@ -38,16 +42,44 @@
                                 <input type="text" name="username"
                                     class="form-control" id="Username"
                                     aria-describedby="emailHelp"
-                                    placeholder="Ім'я">
+                                    placeholder="Ім'я" required>
                             </div>
                             <div class="mb-3">
                                 <input type="password" name="password"
                                     class="form-control" id="password"
-                                    placeholder="Пароль">
+                                    placeholder="Пароль" required>
                             </div>
                             <div class="text-center"><button id="login-btn"
                                     type="submit"
-                                    class="btn btn-color px-5 mb-5 w-100">Увійти</button></div>
+                                    class="btn btn-color px-5 w-100">Увійти</button></div>
+                        </form>
+                        <div class="text-center mb-5">
+                            <span>Реєстрація </span>
+                            <i id="chevron-icon" class="fa fa-chevron-down"
+                            aria-hidden="true" onclick="expandRegisterForm()"></i>
+                            <div id="error-message">
+                                {{ message }}
+                            </div>
+                        </div>
+                        <form method="POST" action="/register" class="card-body cardbody-color p-lg-5 register-form">
+                            <div class="mb-3">
+                                <input type="text" name="username"
+                                    class="form-control" id="Username"
+                                    aria-describedby="emailHelp"
+                                    placeholder="Ім'я" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="password" name="password"
+                                    class="form-control" id="password"
+                                    placeholder="Пароль" required>
+                            </div>
+                            <div class="text-center">
+                                <button id="login-btn"
+                                    type="submit"
+                                    class="btn btn-color px-5 mb-5 w-100">
+                                    Зареєструватись
+                                </button>
+                            </div>
                         </form>
                     </div>
 

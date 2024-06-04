@@ -88,3 +88,11 @@ font-weight: bold;}
     cursor: default;
     opacity: 0.2;
 }
+
+.register-form {
+    display: none;
+}
+
+#error-message {
+    color: red;
+}
