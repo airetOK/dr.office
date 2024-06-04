@@ -4,6 +4,7 @@ from playwright.sync_api import sync_playwright, expect, Playwright, Browser, Pa
 
 BASE_URL = 'http://localhost:5002'
 
+
 def open_close_browsers(func):
     def inner(playwright: Playwright):
         chrome_browser = playwright.chromium.launch(
@@ -13,9 +14,12 @@ def open_close_browsers(func):
         chrome_browser.close()
     return inner
 
+
 @open_close_browsers
 def test_redirect_to_login_page(chrome_browser: Browser):
-    expect(__login_page(chrome_browser)).to_have_url(re.compile(f'{BASE_URL}/login'))
+    expect(__login_page(chrome_browser)).to_have_url(
+        re.compile(f'{BASE_URL}/login'))
+
 
 @open_close_browsers
 def test_add_patient(chrome_browser: Browser):
@@ -24,6 +28,7 @@ def test_add_patient(chrome_browser: Browser):
     page.locator('.fa-plus-circle').click()
     page.locator('#fullNameInput').fill('TestUser')
     page.locator('#savePatient').click(force=True)
+
 
 @open_close_browsers
 def test_add_patients_and_move_to_page_2(chrome_browser: Browser):
@@ -42,6 +47,7 @@ def __login_page(browser: Browser):
     page = context.new_page()
     page.goto(f'{BASE_URL}')
     return page
+
 
 def __login(page: Page):
     page.locator('#Username').fill('user')

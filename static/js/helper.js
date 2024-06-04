@@ -27,3 +27,13 @@ function saveTeeth() {
     const input = document.querySelector('#teethInput');
     input.value += teethStr;
 }
+
+function expandRegisterForm() {
+    if (document.querySelector('.register-form').style.display == 'none') {
+        document.getElementById('chevron-icon').className = 'fa fa-chevron-up';
+        document.querySelector('.register-form').style.display = 'block';
+    } else {
+        document.getElementById('chevron-icon').className = 'fa fa-chevron-down';
+        document.querySelector('.register-form').style.display = 'none';
+    }
+}
