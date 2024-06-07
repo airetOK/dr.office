@@ -2,9 +2,12 @@ import pytest
 import sqlite3
 import repository.users_repository as ur
 import os
+import logging
 
 from util.password_encryptor import PasswordEncryptor
 
+
+logger = logging.getLogger(__name__)
 DB_PATH = 'tests/repository/test.db'
 password_encryptor = PasswordEncryptor()
 
@@ -47,5 +50,5 @@ def __get_user(id):
             res = cur.execute(f'SELECT id, username, password FROM users WHERE id = "{id}"')
             data = res.fetchone()
     except (Exception) as error:
-        print(error)
+        logger.error(error)
     return data
