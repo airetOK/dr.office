@@ -3,7 +3,10 @@ import sqlite3
 import repository.patients_repository as pr
 import repository.users_repository as ur
 import os
+import logging
 
+
+logger = logging.getLogger(__name__)
 DB_PATH = 'tests/repository/test.db'
 
 @pytest.fixture
@@ -90,5 +93,5 @@ def __get_patient(id):
             res = cur.execute(f'SELECT fullName, teeth, actions, price, comment, language FROM patients WHERE id = "{id}"')
             data = res.fetchone()
     except (Exception) as error:
-        print(error)
+        logger.error(error)
     return data
