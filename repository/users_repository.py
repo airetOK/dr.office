@@ -1,9 +1,12 @@
 from werkzeug.datastructures import ImmutableMultiDict
 import sqlite3
 import os
+import logging
 
 from util.password_encryptor import PasswordEncryptor
 
+
+logger = logging.getLogger(__name__)
 password_encryptor = PasswordEncryptor()
 
 
@@ -24,7 +27,7 @@ def add_user(form: ImmutableMultiDict) -> None:
                     VALUES ('{form['username']}', '{ password_encryptor.encrypt(form['password']) }')''')
         conn.commit()
     except (Exception) as error:
-        print(error)
+        logger.error(error)
     finally:
         cur.close()
         conn.close()
@@ -37,7 +40,7 @@ def get_id_by_username(username: str) -> int:
         cur.execute(f"SELECT id FROM users WHERE username = '{username}'")
         res = cur.fetchone()[0]
     except (Exception) as error:
-        print(error)
+        logger.error(error)
     finally:
         cur.close()
         conn.close()
@@ -56,7 +59,7 @@ def is_user_exists_with_username(username) -> object:
         if cur.fetchone()[0] != 0:
             is_user_exists = True
     except (Exception) as error:
-        print(error)
+        logger.error(error)
     finally:
         cur.close()
         conn.close()
@@ -75,7 +78,7 @@ def is_user_exists(username, password) -> bool:
         if cur.fetchone()[0] != 0:
             is_user_exists = True
     except (Exception) as error:
-        print(error)
+        logger.error(error)
     finally:
         cur.close()
         conn.close()

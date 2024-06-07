@@ -2,7 +2,10 @@ from werkzeug.datastructures import ImmutableMultiDict
 import sqlite3
 import os
 from util.language import get_svg_name_by_language
+import logging
 
+
+logger = logging.getLogger(__name__)
 LIMIT = 10
 
 
@@ -24,7 +27,7 @@ def add_patient(form: ImmutableMultiDict, user_id: int) -> None:
                     '{form['price']}', '{form['comment']}', '{form['language']}', '{form['date']}', {user_id})''')
         conn.commit()
     except (Exception) as error:
-        print(error)
+        logger.error(error)
     finally:
         cur.close()
         conn.close()
@@ -40,7 +43,7 @@ def update_patient(form: ImmutableMultiDict, id: str, user_id: int) -> None:
                     WHERE id = {id} and user_id = {user_id}''')
         conn.commit()
     except (Exception) as error:
-        print(error)
+        logger.error(error)
     finally:
         cur.close()
         conn.close()
@@ -54,7 +57,7 @@ def delete_patient(id: str, user_id: int):
                     WHERE id = {id} and user_id = {user_id}''')
         conn.commit()
     except (Exception) as error:
-        print(error)
+        logger.error(error)
     finally:
         cur.close()
         conn.close()
@@ -74,7 +77,7 @@ def get_patients(user_id: int, skip: str) -> list[object]:
                     OFFSET {skip}''')
         patients = __convert(cur.fetchall())
     except (Exception) as error:
-        print(error)
+        logger.error(error)
     finally:
         cur.close()
         conn.close()
@@ -93,7 +96,7 @@ def get_patients_by_full_name(full_name, skip, user_id: int) -> list[object]:
                     OFFSET {skip}''')
         patients = __convert(cur.fetchall())
     except (Exception) as error:
-        print(error)
+        logger.error(error)
     finally:
         cur.close()
         conn.close()
@@ -110,7 +113,7 @@ def get_patient(id, user_id: int) -> object:
                     WHERE p.id = {id}''')
         patient = __convert(cur.fetchall())[0]
     except (Exception) as error:
-        print(error)
+        logger.error(error)
     finally:
         cur.close()
         conn.close()
@@ -127,7 +130,7 @@ def get_patients_count(user_id: int) -> int:
                     ON p.user_id={user_id}''')
         count = cur.fetchone()[0]
     except (Exception) as error:
-        print(error)
+        logger.error(error)
     finally:
         cur.close()
         conn.close()
@@ -146,7 +149,7 @@ def get_patients_by_full_name_count(full_name, user_id: int) -> int:
                     ORDER BY p.id DESC''')
         count = cur.fetchone()[0]
     except (Exception) as error:
-        print(error)
+        logger.error(error)
     finally:
         cur.close()
         conn.close()
