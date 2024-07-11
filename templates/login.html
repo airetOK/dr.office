@@ -81,6 +81,34 @@
                                 </button>
                             </div>
                         </form>
+                        <div class="text-center mb-5">
+                            <span>Забули пароль? </span>
+                            <i id="forget-chevron-icon" class="fa fa-chevron-down"
+                            aria-hidden="true" onclick="expandForgetPasswordForm()"></i>
+                            <div id="error-message">
+                                {{ forgetMessage }}
+                            </div>
+                        </div>
+                        <form method="POST" action="/forget-password" class="card-body cardbody-color p-lg-5 forget-password-form">
+                            <div class="mb-3">
+                                <input type="text" name="username"
+                                    class="form-control" id="Username"
+                                    aria-describedby="emailHelp"
+                                    placeholder="Ім'я" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="password" name="password"
+                                    class="form-control" id="password"
+                                    placeholder="Новий пароль" required>
+                            </div>
+                            <div class="text-center">
+                                <button id="forget-password-btn"
+                                    type="submit"
+                                    class="btn btn-color px-5 mb-5 w-100">
+                                    Підтвердити
+                                </button>
+                            </div>
+                        </form>
                     </div>
 
                 </div>

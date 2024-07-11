@@ -1,0 +1,7 @@
+# pyproject.toml
+[tool.pytest.ini_options]
+testpaths = [
+    "tests/repository",
+    "tests/util",
+    "tests/test_app.py"
+]

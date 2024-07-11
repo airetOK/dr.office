@@ -42,6 +42,17 @@ def test_is_user_exists(get_repository):
 def test_is_user_not_exists(get_repository):
     assert not get_repository.is_user_exists('not_found', '')
 
+def test_set_new_password(get_repository):
+    get_repository.add_user({'id': 1, 'username': 'user', 'password': 'test'})
+    get_repository.set_password('user', 'new_password')
+    assert get_repository.is_user_exists('user', 'new_password')
+    assert not get_repository.is_user_exists('user', 'test')
+
+def test_set_password_for_non_exist_user(get_repository):
+    get_repository.add_user({'id': 1, 'username': 'user', 'password': 'test'})
+    get_repository.set_password('not_exist', 'new_password')
+    assert not get_repository.is_user_exists('not_exist', 'new_password')
+    assert get_repository.is_user_exists('user', 'test')
 
 def __get_user(id):
     try:

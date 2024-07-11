@@ -47,7 +47,7 @@ def get_id_by_username(username: str) -> int:
     return res
 
 
-def is_user_exists_with_username(username) -> object:
+def is_user_exists_with_username(username) -> bool:
     is_user_exists = False
     try:
         conn = __connect(os.getenv('DB_PATH'))
@@ -83,3 +83,16 @@ def is_user_exists(username, password) -> bool:
         cur.close()
         conn.close()
     return is_user_exists
+
+def set_password(username: str, password: str):
+    try:
+        conn = __connect(os.getenv('DB_PATH'))
+        cur = conn.cursor()
+        cur.execute(f'''UPDATE users SET password="{password_encryptor.encrypt(password)}"
+                    WHERE username="{username}"''')
+        conn.commit()
+    except (Exception) as error:
+        logger.error(error)
+    finally:
+        cur.close()
+        conn.close()
