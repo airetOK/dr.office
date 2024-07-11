@@ -157,6 +157,24 @@ def move_to_search_page(page):
                            full_name=full_name,
                            current_page=int(page))
 
+@app.route("/forget-password", methods=["POST"])
+def forget_password():
+    username = request.form["username"]
+    password = request.form["password"]
+
+    if not ur.is_user_exists_with_username(username):
+        return render_template('login.html', forgetMessage="Користувача з таким ім\'ям не існує")
+
+    res = UsersValidation().are_username_and_password_valid(username, password)
+    if not res.is_valid():
+        return render_template('login.html', forgetMessage=res.get_message())
+    
+    ur.set_password(username, password)
+    access_token = create_access_token(
+        identity=username, expires_delta=datetime.timedelta(days=30))
+    response = make_response(redirect('/'))
+    set_access_cookies(response, access_token)
+    return response
 
 if __name__ == "__main__":
     app.run(debug=True)

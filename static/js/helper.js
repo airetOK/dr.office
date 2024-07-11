@@ -37,3 +37,13 @@ function expandRegisterForm() {
         document.querySelector('.register-form').style.display = 'none';
     }
 }
+
+function expandForgetPasswordForm() {
+    if (document.querySelector('.forget-password-form').style.display == 'none') {
+        document.getElementById('forget-chevron-icon').className = 'fa fa-chevron-up';
+        document.querySelector('.forget-password-form').style.display = 'block';
+    } else {
+        document.getElementById('forget-chevron-icon').className = 'fa fa-chevron-down';
+        document.querySelector('.forget-password-form').style.display = 'none';
+    }
+}
