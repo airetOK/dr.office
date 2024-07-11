@@ -42,8 +42,6 @@ def captured_templates(app):
 
 
 """ test function to set token in cookies """
-
-
 @app.route("/cookie_login", methods=["GET"])
 def cookie_login():
     resp = jsonify(login=True)
@@ -236,3 +234,39 @@ def test_login_user_not_exists_template(client):
     template, context = templates[0]
     assert template.name == "login.html"
     assert context['message'] == "Користувача не знайдено"
+
+
+def test_forget_password_user_not_exists_template(client):
+    with captured_templates(app) as templates:
+        response = client.post("/forget-password", data={
+            "username": "notExists",
+            "password": "test",
+        })
+    assert response.status_code == 200
+    assert len(templates) == 1
+    template, context = templates[0]
+    assert template.name == "login.html"
+    assert context['forgetMessage'] == "Користувача з таким ім\'ям не існує"
+
+def test_forget_password_password_incorrect(client):
+    with captured_templates(app) as templates:
+        response = client.post("/forget-password", data={
+            "username": "user",
+            "password": "test",
+        })
+    assert response.status_code == 200
+    assert len(templates) == 1
+    template, context = templates[0]
+    assert template.name == "login.html"
+    assert context['forgetMessage'] == """Пароль має бути не менше за 8
+                літер та довше ніж 20 літер"""
+
+@patch('repository.users_repository.set_password', Mock())
+def test_forget_password_new_password(client):
+    with captured_templates(app) as templates:
+        response = client.post("/forget-password", data={
+            "username": "user",
+            "password": "Qwerty1!",
+        })
+    assert response.status_code == 302
+    assert ur.set_password.assert_called_once

@@ -93,6 +93,10 @@ font-weight: bold;}
     display: none;
 }
 
+.forget-password-form {
+    display: none;
+}
+
 #error-message {
     color: red;
 }
