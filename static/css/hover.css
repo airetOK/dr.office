@@ -13,3 +13,7 @@ i:hover {
 #logo:hover {
     transform: scale(1.2);
 }
+
+#title-pic:hover {
+    transform: scale(1.1);
+}
