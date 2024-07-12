@@ -126,8 +126,7 @@ def get_patients_count(user_id: int) -> int:
         cur = conn.cursor()
         cur.execute(f'''SELECT COUNT(*) 
                     FROM patients p 
-                    JOIN users u 
-                    ON p.user_id={user_id}''')
+                    WHERE user_id={user_id}''')
         count = cur.fetchone()[0]
     except (Exception) as error:
         logger.error(error)
