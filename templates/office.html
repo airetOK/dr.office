@@ -89,9 +89,12 @@
                         <td>{{ patient['actions'] }}</td>
                         <td>{{ patient['price'] }}</td>
                         <td>{{ patient['comment'] }}</td>
-                        <td><img class="countryFlag"
-                                src="../static/svg/{{ patient['lang_svg'] }}.svg"
-                                alt="img" /></td>
+                        <td>
+                            {% if patient['lang_svg'] != "unknown" %}
+                                <img class="countryFlag"
+                                    src="../static/svg/{{ patient['lang_svg'] }}.svg"
+                                    alt="img" /></td>
+                            {% endif %}
                         <td>{{ patient['date'] }}</td>
                         <td>
                             <a href="/delete/{{ patient['id'] }}"><i

@@ -86,6 +86,22 @@ def test_get_patients_only_one_record_return(get_repository):
     assert 10 == len(get_repository.get_patients_by_full_name('test', user_id=1, skip=5))
 
 
+def test_get_patients_count(get_repository):
+    get_repository.add_patient({'fullName': 'test', 'teeth': '11,12', 'actions': 'test', 'price': '120', 
+                                'comment': 'test', 'language': 'Англійська', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'test', 'teeth': '11,12', 'actions': 'test', 'price': '120', 
+                                'comment': 'test', 'language': 'Польська', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'test', 'teeth': '11,12', 'actions': 'test', 'price': '120', 
+                                'comment': 'test', 'language': 'Українська', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'test', 'teeth': '11,12', 'actions': 'test', 'price': '120', 
+                                'comment': 'test', 'language': 'Українська', 'date': '2024-01-01'}, 2)
+    assert 3 == get_repository.get_patients_count(user_id=1)
+    assert 1 == get_repository.get_patients_count(user_id=2)
+
+def test_get_patients_count_for_non_exist_user(get_repository):
+    assert 0 == get_repository.get_patients_count(user_id=0)
+
+
 def __get_patient(id):
     try:
         with sqlite3.connect(DB_PATH) as conn:
