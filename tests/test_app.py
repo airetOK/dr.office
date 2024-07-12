@@ -133,7 +133,7 @@ def test_delete_patient(client):
 
 def test_search_patients_by_full_name(client):
     client.get("/cookie_login")
-    response = client.get("/search")
+    response = client.get("/search/fullName")
     assert response.status_code == 200
 
 
@@ -143,9 +143,9 @@ def test_get_page(client):
     assert response.status_code == 200
 
 
-def test_get_search_page(client):
+def test_get_search_page_by_full_name(client):
     client.get("/cookie_login")
-    response = client.get("/search/page/1?fullName=test")
+    response = client.get("/search/fullName/page/1?fullName=test")
     assert response.status_code == 200
 
 
