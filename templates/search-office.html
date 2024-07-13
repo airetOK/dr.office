@@ -68,15 +68,17 @@
                                 </select>
                             </div>
                         </li>
-                        <form method="GET" action="/search/{{ param }}" class="d-flex search-form">
-                            <input class="form-control me-2" type="search"
-                                id="searchInput"
-                                placeholder="Введіть ім'я" name="searchValue"
-                                aria-label="Search">
-                            <button class="btn btn-outline-dark"
-                                id="searchButton"
-                                type="submit">Знайти</button>
-                        </form>
+                        <li class="nav-item">
+                            <form method="GET" action="/search/{{ param }}" class="d-flex search-form">
+                                <input class="form-control me-2" type="search"
+                                    id="searchInput"
+                                    placeholder="Введіть значення" name="searchValue"
+                                    aria-label="Search">
+                                <button class="btn btn-outline-dark"
+                                    id="searchButton"
+                                    type="submit">Знайти</button>
+                            </form>
+                        </li>
                     </ul>
                 </div>
             </div>
