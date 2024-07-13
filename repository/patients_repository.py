@@ -180,9 +180,9 @@ def get_patients_by_actions_count(actions, user_id: int) -> int:
         cur = conn.cursor()
         cur.execute(f'''SELECT COUNT(*) 
                     FROM patients p
-                    JOIN users u ON p.user_id={user_id}
                     WHERE p.actions 
-                    LIKE \'%{actions}%\' 
+                    LIKE \'%{actions}%\'
+                    AND p.user_id={user_id}
                     ORDER BY p.id DESC''')
         count = cur.fetchone()[0]
     except (Exception) as error:
