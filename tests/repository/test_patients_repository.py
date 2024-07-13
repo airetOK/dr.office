@@ -86,6 +86,56 @@ def test_get_patients_only_one_record_return(get_repository):
     assert 10 == len(get_repository.get_patients_by_full_name('test', user_id=1, skip=5))
 
 
+def test_get_patients_count(get_repository):
+    get_repository.add_patient({'fullName': 'test', 'teeth': '11,12', 'actions': 'test', 'price': '120', 
+                                'comment': 'test', 'language': 'Англійська', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'test', 'teeth': '11,12', 'actions': 'test', 'price': '120', 
+                                'comment': 'test', 'language': 'Польська', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'test', 'teeth': '11,12', 'actions': 'test', 'price': '120', 
+                                'comment': 'test', 'language': 'Українська', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'test', 'teeth': '11,12', 'actions': 'test', 'price': '120', 
+                                'comment': 'test', 'language': 'Українська', 'date': '2024-01-01'}, 2)
+    assert 3 == get_repository.get_patients_count(user_id=1)
+    assert 1 == get_repository.get_patients_count(user_id=2)
+
+
+def test_get_patients_count_for_non_exist_user(get_repository):
+    assert 0 == get_repository.get_patients_count(user_id=0)
+
+
+def test_get_patients_by_actions(get_repository):
+    get_repository.add_patient({'fullName': 'NameTest', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'TestNameAgain', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'AnotherTestName', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'}, 1)
+    assert 3 == len(get_repository.get_patients_by_actions('test', user_id=1, skip=0))
+    assert 0 == len(get_repository.get_patients_by_actions('unknown_actions', user_id=1, skip=0))
+    assert 1 == len(get_repository.get_patients_by_actions('test', user_id=1, skip=2))
+    assert 0 == len(get_repository.get_patients_by_actions('test', user_id=0, skip=0))
+
+
+def test_get_patients_by_actions_count(get_repository):
+    get_repository.add_patient({'fullName': 'NameTest', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'TestNameAgain', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'AnotherTestName', 'teeth': '11,12', 'actions': 'other', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'NameTest', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'TestNameAgain', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'}, 1)
+    assert 4 == get_repository.get_patients_by_actions_count('test', 1)
+    assert 1 == get_repository.get_patients_by_actions_count('other', 1)
+    assert 0 == get_repository.get_patients_by_actions_count('unknown', 1)
+    assert 0 == get_repository.get_patients_by_actions_count('test', 0)
+
+def test_get_patients_by_full_name_count(get_repository):
+    get_repository.add_patient({'fullName': 'NameTest', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'TestNameAgain', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'AnotherTestName', 'teeth': '11,12', 'actions': 'other', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'NameTest', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'TestNameAgain', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'date': '2024-01-01'}, 1)
+    assert 2 == get_repository.get_patients_by_full_name_count('NameTest', 1)
+    assert 1 == get_repository.get_patients_by_full_name_count('AnotherTestName', 1)
+    assert 0 == get_repository.get_patients_by_full_name_count('unknown', 1)
+    assert 0 == get_repository.get_patients_by_full_name_count('NameTest', 0)
+
+
 def __get_patient(id):
     try:
         with sqlite3.connect(DB_PATH) as conn:

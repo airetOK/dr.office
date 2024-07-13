@@ -126,8 +126,7 @@ def get_patients_count(user_id: int) -> int:
         cur = conn.cursor()
         cur.execute(f'''SELECT COUNT(*) 
                     FROM patients p 
-                    JOIN users u 
-                    ON p.user_id={user_id}''')
+                    WHERE user_id={user_id}''')
         count = cur.fetchone()[0]
     except (Exception) as error:
         logger.error(error)
@@ -143,9 +142,47 @@ def get_patients_by_full_name_count(full_name, user_id: int) -> int:
         cur = conn.cursor()
         cur.execute(f'''SELECT COUNT(*) 
                     FROM patients p
-                    JOIN users u ON p.user_id={user_id}
                     WHERE p.fullName 
-                    LIKE \'%{full_name}%\' 
+                    LIKE \'%{full_name}%\'
+                    AND p.user_id={user_id} 
+                    ORDER BY p.id DESC''')
+        count = cur.fetchone()[0]
+    except (Exception) as error:
+        logger.error(error)
+    finally:
+        cur.close()
+        conn.close()
+    return count
+
+
+def get_patients_by_actions(actions: str, skip: int, user_id: int) -> list[object]:
+    try:
+        conn = __connect(os.getenv('DB_PATH'))
+        cur = conn.cursor()
+        cur.execute(f'''SELECT DISTINCT p.id, p.fullName, p.teeth, p.actions, p.price, p.comment, p.language, p.date 
+                    FROM patients p
+                    JOIN users u ON p.user_id={user_id}
+                    WHERE p.actions LIKE \'%{actions}%\' 
+                    ORDER BY p.id DESC LIMIT {LIMIT} 
+                    OFFSET {skip}''')
+        patients = __convert(cur.fetchall())
+    except (Exception) as error:
+        logger.error(error)
+    finally:
+        cur.close()
+        conn.close()
+    return patients
+
+
+def get_patients_by_actions_count(actions, user_id: int) -> int:
+    try:
+        conn = __connect(os.getenv('DB_PATH'))
+        cur = conn.cursor()
+        cur.execute(f'''SELECT COUNT(*) 
+                    FROM patients p
+                    WHERE p.actions 
+                    LIKE \'%{actions}%\'
+                    AND p.user_id={user_id}
                     ORDER BY p.id DESC''')
         count = cur.fetchone()[0]
     except (Exception) as error:

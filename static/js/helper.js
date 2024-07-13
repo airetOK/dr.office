@@ -47,3 +47,12 @@ function expandForgetPasswordForm() {
         document.querySelector('.forget-password-form').style.display = 'none';
     }
 }
+
+function appendOptionToSearchForm() {
+    const searchParam = document.getElementById("searchParam");
+    const value = searchParam.value;
+    const searchForm = document.querySelector('.search-form');
+    let arr = searchForm.action.split('/');
+    arr[arr.length - 1] = value;
+    searchForm.action = arr.join('/');
+}

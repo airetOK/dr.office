@@ -3,8 +3,9 @@ import os
 from flask_jwt_extended import create_access_token, set_access_cookies
 from app import app
 from flask import jsonify
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, MagicMock
 import repository.users_repository as ur
+import repository.patients_repository as pr
 from flask import template_rendered
 from contextlib import contextmanager
 
@@ -131,9 +132,23 @@ def test_delete_patient(client):
     assert response.location == "/"
 
 
+@patch('repository.patients_repository.get_patients_by_full_name', MagicMock())
+@patch('repository.patients_repository.get_patients_by_actions', MagicMock())
 def test_search_patients_by_full_name(client):
     client.get("/cookie_login")
-    response = client.get("/search")
+    response = client.get("/search/fullName")
+    assert not pr.get_patients_by_actions.called
+    assert pr.get_patients_by_full_name.assert_called_once
+    assert response.status_code == 200
+
+
+@patch('repository.patients_repository.get_patients_by_full_name', MagicMock())
+@patch('repository.patients_repository.get_patients_by_actions', MagicMock())
+def test_search_patients_by_actions(client):
+    client.get("/cookie_login")
+    response = client.get("/search/actions")
+    assert pr.get_patients_by_actions.assert_called_once
+    assert not pr.get_patients_by_full_name.called
     assert response.status_code == 200
 
 
@@ -143,9 +158,9 @@ def test_get_page(client):
     assert response.status_code == 200
 
 
-def test_get_search_page(client):
+def test_get_search_page_by_full_name(client):
     client.get("/cookie_login")
-    response = client.get("/search/page/1?fullName=test")
+    response = client.get("/search/fullName/page/1?fullName=test")
     assert response.status_code == 200
 
 
