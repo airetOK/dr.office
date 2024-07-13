@@ -81,25 +81,13 @@ def register():
 @jwt_required(locations=['cookies'])
 def office():
     user_id = ur.get_id_by_username(get_jwt_identity())
-    return render_template('office.html',
+    return render_template("office.html",
                            patients=pr.get_patients(user_id, skip=0),
                            languages=get_language_names(),
+                           search_param="fullName",
                            total_pages=math.ceil(
                                float(pr.get_patients_count(user_id)/10)),
                            current_page=1)
-
-
-@app.route("/page/<page>")
-@jwt_required(locations=['cookies'])
-def move_to_page(page):
-    user_id = ur.get_id_by_username(get_jwt_identity())
-    skip = int(page)*10 - 10
-    return render_template('office.html',
-                           patients=pr.get_patients(user_id, skip=str(skip)),
-                           languages=get_language_names(),
-                           total_pages=math.ceil(
-                               float(pr.get_patients_count(user_id)/10)),
-                           current_page=int(page))
 
 
 @app.route("/add", methods=['POST'])
@@ -129,33 +117,70 @@ def delete_patient(id):
     return redirect('/')
 
 
-@app.route("/search")
+@app.route("/page/<page>")
 @jwt_required(locations=['cookies'])
-def search_patients_by_full_name():
+def move_to_page(page):
     user_id = ur.get_id_by_username(get_jwt_identity())
-    full_name = request.args.get("fullName")
-    return render_template('search-office.html', patients=pr.get_patients_by_full_name(full_name, 0, user_id),
-                           total_pages=math.ceil(
-                               float(pr.get_patients_by_full_name_count(full_name, user_id)/10)),
-                           full_name=full_name,
-                           current_page=1,
-                           languages=get_language_names())
-
-
-@app.route("/search/page/<page>")
-@jwt_required(locations=['cookies'])
-def move_to_search_page(page):
-    user_id = ur.get_id_by_username(get_jwt_identity())
-    full_name = request.args.get("fullName")
     skip = int(page)*10 - 10
-    return render_template('search-office.html',
-                           patients=pr.get_patients_by_full_name(
-                               full_name, str(skip), user_id),
+    return render_template('office.html',
+                           patients=pr.get_patients(user_id, skip=str(skip)),
                            languages=get_language_names(),
+                           search_param="fullName",
                            total_pages=math.ceil(
-                               float(pr.get_patients_by_full_name_count(full_name, user_id)/10)),
-                           full_name=full_name,
+                               float(pr.get_patients_count(user_id)/10)),
                            current_page=int(page))
+
+
+@app.route("/search/<param>")
+@jwt_required(locations=['cookies'])
+def search_patients_by_full_name(param: str):
+    user_id = ur.get_id_by_username(get_jwt_identity())
+    value = request.args.get("searchValue")
+    if param == "fullName":
+        return render_template("search-office.html", patients=pr.get_patients_by_full_name(value, 0, user_id),
+            total_pages=math.ceil(
+            float(pr.get_patients_by_full_name_count(value, user_id)/10)),
+            param="fullName",
+            value=value,
+            current_page=1,
+            languages=get_language_names())
+    elif param == "actions":
+        return render_template("search-office.html", patients=pr.get_patients_by_actions(value, 0, user_id),
+            total_pages=math.ceil(
+            float(pr.get_patients_by_actions_count(value, user_id)/10)),
+            param="actions",
+            value=value,
+            current_page=1,
+            languages=get_language_names())
+
+
+@app.route("/search/<param>/page/<page>")
+@jwt_required(locations=['cookies'])
+def move_to_search_page(param, page):
+    user_id = ur.get_id_by_username(get_jwt_identity())
+    skip = int(page)*10 - 10
+    if param == "fullName":
+        full_name = request.args.get("fullName")
+        return render_template('search-office.html',
+            patients=pr.get_patients_by_full_name(
+                full_name, str(skip), user_id),
+            languages=get_language_names(),
+            total_pages=math.ceil(
+                float(pr.get_patients_by_full_name_count(full_name, user_id)/10)),
+            param="fullName",
+            value=full_name,
+            current_page=int(page))
+    elif param == "actions":
+        actions = request.args.get("actions")
+        return render_template('search-office.html',
+            patients=pr.get_patients_by_actions(
+                actions, str(skip), user_id),
+            languages=get_language_names(),
+            total_pages=math.ceil(
+                float(pr.get_patients_by_actions_count(actions, user_id)/10)),
+            param="actions",
+            value=actions,
+            current_page=int(page))
 
 @app.route("/forget-password", methods=["POST"])
 def forget_password():

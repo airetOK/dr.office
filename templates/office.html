@@ -53,10 +53,20 @@
                                     aria-hidden="true"></i>
                             </a>
                         </li>
-                        <form method="GET" action="/search" class="d-flex">
+                        <li class="nav-item">
+                            <div class="mb-3">
+                                <select class="form-select"
+                                    id="searchParam"
+                                    onclick="appendOptionToSearchForm()">
+                                    <option value="fullName">Ім'я</option>
+                                    <option value="actions">Маніпуляції</option>
+                                </select>
+                            </div>
+                        </li>
+                        <form method="GET" action="/search/{{ search_param }}" class="d-flex search-form">
                             <input class="form-control me-2" type="search"
                                 id="searchInput"
-                                placeholder="Введіть ім'я" name="fullName"
+                                placeholder="Введіть ім'я" name="searchValue"
                                 aria-label="Search">
                             <button class="btn btn-outline-dark"
                                 id="searchButton"
@@ -214,7 +224,7 @@
                                     <option>Консультація</option>
                                     <option>Корекція реставрації</option>
                                     <option>Кофердам</option>
-                                    <option>MTA</option>
+                                    <option>МТА</option>
                                     <option>Не прийшов</option>
                                     <option>Первинне ендо (ліки)</option>
                                     <option>Первинне ендо
