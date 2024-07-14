@@ -20,9 +20,16 @@
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
         <script src="../static/js/helper.js"></script>
+        <style>
+            body {
+                background-image: url(../static/images/background-image.png); 
+                background-size: 10rem; 
+                background-repeat: space;
+            }
+        </style>
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
             <div class="container-fluid">
                 <button class="navbar-toggler"
                     type="button"
@@ -64,10 +71,13 @@
                             </div>
                         </li>
                         <li class="nav-item">
-                            <form method="GET" action="/search/{{ search_param }}" class="d-flex search-form">
+                            <form method="GET"
+                                action="/search/{{ search_param }}"
+                                class="d-flex search-form">
                                 <input class="form-control me-2" type="search"
                                     id="searchInput"
-                                    placeholder="Введіть значення" name="searchValue"
+                                    placeholder="Введіть значення"
+                                    name="searchValue"
                                     aria-label="Search">
                                 <button class="btn btn-outline-dark"
                                     id="searchButton"
@@ -78,49 +88,61 @@
                 </div>
             </div>
         </nav>
-
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-dark">
-                    <tr>
-                        <th>ПІБ</th>
-                        <th>Зуби</th>
-                        <th>Маніпуляція</th>
-                        <th>Ціна</th>
-                        <th>Коментар</th>
-                        <th>Мова</th>
-                        <th>Дата</th>
-                        <th>Дії</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for patient in patients %}
-                    <tr>
-                        <td>{{ patient['fullname'] }}</td>
-                        <td>{{ patient['teeth'] }}</td>
-                        <td>{{ patient['actions'] }}</td>
-                        <td>{{ patient['price'] }}</td>
-                        <td>{{ patient['comment'] }}</td>
-                        <td>
-                            {% if patient['lang_svg'] != "unknown" %}
-                                <img class="countryFlag"
-                                    src="../static/svg/{{ patient['lang_svg'] }}.svg"
-                                    alt="img" /></td>
-                            {% endif %}
-                        <td>{{ patient['date'] }}</td>
-                        <td>
-                            <a href="/delete/{{ patient['id'] }}"><i
-                                    class="fa fa-trash-o"
-                                    aria-hidden="true"></i></a>
-                            <a href="/update/{{ patient['id'] }}"><i
-                                    class="fa fa-pencil"
-                                    aria-hidden="true"></i></a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        
+        {% for patient in patients %}
+        <div class="card mb-3">
+            <div class="d-flex card-header justify-content-between">
+                <div>
+                    <h5>{{ patient['fullname'] }}</h5>
+                </div>
+                <div>
+                    <a data-bs-toggle="modal"
+                    data-bs-target="#deletePatientModal"
+                    data-patient-id="{{ patient['id'] }}"
+                    aria-current="page"
+                    onclick="appendPatientIdToHref(this)"
+                    href="#"><i
+                        class="fa fa-times fa-lg"
+                        aria-hidden="true"></i></a>
+                </div>
+            </div>
+            <div class="card-body container m-0">
+                <div class="row mb-2">
+                    <div class="col-4 card-title d-flex align-items-center">Зуби:</div>
+                    <div class="col-8">{{ patient['teeth'] }}</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-4 card-title d-flex align-items-center">Маніпуляції:</div>
+                    <div class="col-8">{{ patient['actions'] }}</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-4 card-title d-flex align-items-center">Ціна:</div>
+                    <div class="col-8">{{ patient['price'] }}</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-4 card-title d-flex align-items-center">Коментар:</div>
+                    <div class="col-8">{{ patient['comment'] }}</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-4 card-title d-flex align-items-center">Мова:</div>
+                    <div class="col-8">
+                        {% if patient['lang_svg'] != "unknown" %}
+                            <img class="countryFlag"
+                                src="../static/svg/{{ patient['lang_svg'] }}.svg"
+                                alt="img" /></td>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-4 card-title d-flex align-items-center">Дата:</div>
+                    <div class="col-8">{{ patient['date'] }}</div>
+                </div>
+            </div>
+            <div class="card-footer text-center text-muted">
+                <a class="btn btn-outline-dark" href="/update/{{ patient['id'] }}">Редагувати</a>
+            </div>
         </div>
+        {% endfor %}
 
         <div class="page-container">
             <div>
@@ -138,9 +160,9 @@
             </div>
             <div>
                 {% if total_pages == 0 %}
-                    <span>Пацієнтів немає.</span>
+                <span>Пацієнтів немає.</span>
                 {% else %}
-                    {{ current_page }}
+                {{ current_page }}
                 {% endif %}
             </div>
             <div>
@@ -325,6 +347,28 @@
                                     aria-label="Save"
                                     onclick="saveTeeth()">Зберегти</button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- modal delete patient window -->
+            <div class="modal fade" id="deletePatientModal" tabindex="-1"
+                aria-labelledby="chooseTeethModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"
+                                id="chooseTeethModalLabel">Видалити
+                                пацієнта?</h5>
+                            <button type="button" class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-footer">
+                            <a id="deleteLinkPatient"
+                                class="btn btn-outline-danger" role="button"
+                                href>Так</a>
                         </div>
                     </div>
                 </div>

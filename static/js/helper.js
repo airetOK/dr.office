@@ -67,3 +67,7 @@ function showHidePassword(element, inputId) {
         element.className = element.className.replace('fa-eye', 'fa-eye-slash');
     }
 }
+
+function appendPatientIdToHref(element) {
+    document.querySelector('#deleteLinkPatient').href = '/delete/' + element.getAttribute('data-patient-id');
+}
