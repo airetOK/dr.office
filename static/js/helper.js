@@ -56,3 +56,14 @@ function appendOptionToSearchForm() {
     arr[arr.length - 1] = value;
     searchForm.action = arr.join('/');
 }
+
+function showHidePassword(element, inputId) {
+    const passwordInput = document.querySelector(`#${inputId}`);
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        element.className = element.className.replace('fa-eye-slash', 'fa-eye');
+    } else {
+        passwordInput.type = "password";
+        element.className = element.className.replace('fa-eye', 'fa-eye-slash');
+    }
+}
