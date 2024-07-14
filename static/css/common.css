@@ -10,10 +10,17 @@ font-weight: bold;}
 }
 
 #searchInput {
-    border: 0;
     outline: 0;
     border-radius: 0px;
-    border-bottom: solid black;
+    border: solid black;
+    background-color: #f8f9fa;
+    border-width: thin;
+}
+
+#searchParam {
+    outline: 0;
+    border-radius: 0px;
+    border: solid black;
     background-color: #f8f9fa;
     border-width: thin;
 }
