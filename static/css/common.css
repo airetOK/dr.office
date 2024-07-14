@@ -1,9 +1,18 @@
+html {
+    height: 100%;
+}
+
 @font-face{
 font-family: blogger-font;
 src: url('Blogger_Sans.otf');
-font-weight: bold;}
+}
 
 * {font-family: blogger-font;}
+
+.col-4 {
+    font-family: blogger-font; 
+    font-weight: bold;
+}
 
 .collapse {
     justify-content: space-between;
@@ -13,7 +22,7 @@ font-weight: bold;}
     outline: 0;
     border-radius: 0px;
     border: solid black;
-    background-color: #f8f9fa;
+    background-color: white;
     border-width: thin;
 }
 
@@ -21,7 +30,7 @@ font-weight: bold;}
     outline: 0;
     border-radius: 0px;
     border: solid black;
-    background-color: #f8f9fa;
+    background-color: white;
     border-width: thin;
 }
 
@@ -73,8 +82,8 @@ font-weight: bold;}
     padding-left: 0%;
 }
 
-.fa-trash-o {
-    color: #dc143c;
+.fa-times {
+    color: #c91824;
 }
 
 .countryFlag {
