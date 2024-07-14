@@ -64,10 +64,13 @@
                             </div>
                         </li>
                         <li class="nav-item">
-                            <form method="GET" action="/search/{{ search_param }}" class="d-flex search-form">
+                            <form method="GET"
+                                action="/search/{{ search_param }}"
+                                class="d-flex search-form">
                                 <input class="form-control me-2" type="search"
                                     id="searchInput"
-                                    placeholder="Введіть значення" name="searchValue"
+                                    placeholder="Введіть значення"
+                                    name="searchValue"
                                     aria-label="Search">
                                 <button class="btn btn-outline-dark"
                                     id="searchButton"
@@ -103,13 +106,18 @@
                         <td>{{ patient['comment'] }}</td>
                         <td>
                             {% if patient['lang_svg'] != "unknown" %}
-                                <img class="countryFlag"
-                                    src="../static/svg/{{ patient['lang_svg'] }}.svg"
-                                    alt="img" /></td>
-                            {% endif %}
+                            <img class="countryFlag"
+                                src="../static/svg/{{ patient['lang_svg'] }}.svg"
+                                alt="img" /></td>
+                        {% endif %}
                         <td>{{ patient['date'] }}</td>
                         <td>
-                            <a href="/delete/{{ patient['id'] }}"><i
+                            <a data-bs-toggle="modal"
+                                data-bs-target="#deletePatientModal"
+                                data-patient-id="{{ patient['id'] }}"
+                                aria-current="page"
+                                onclick="appendPatientIdToHref(this)"
+                                href="#"><i
                                     class="fa fa-trash-o"
                                     aria-hidden="true"></i></a>
                             <a href="/update/{{ patient['id'] }}"><i
@@ -138,9 +146,9 @@
             </div>
             <div>
                 {% if total_pages == 0 %}
-                    <span>Пацієнтів немає.</span>
+                <span>Пацієнтів немає.</span>
                 {% else %}
-                    {{ current_page }}
+                {{ current_page }}
                 {% endif %}
             </div>
             <div>
@@ -325,6 +333,28 @@
                                     aria-label="Save"
                                     onclick="saveTeeth()">Зберегти</button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- modal delete patient window -->
+            <div class="modal fade" id="deletePatientModal" tabindex="-1"
+                aria-labelledby="chooseTeethModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"
+                                id="chooseTeethModalLabel">Видалити
+                                пацієнта?</h5>
+                            <button type="button" class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-footer">
+                            <a id="deleteLinkPatient"
+                                class="btn btn-outline-danger" role="button"
+                                href>Так</a>
                         </div>
                     </div>
                 </div>
