@@ -285,3 +285,14 @@ def test_forget_password_new_password(client):
         })
     assert response.status_code == 302
     assert ur.set_password.assert_called_once
+
+def test_logout(client):
+    client.get("/cookie_login")
+    assert 200 == client.get("/").status_code
+    assert 200 == client.get("/page/1").status_code
+    assert 200 == client.get("/search/fullName").status_code
+    response = client.post("/logout")
+    assert 302 == response.status_code
+    assert 302 == client.get("/").status_code
+    assert 302 == client.get("/page/1").status_code
+    assert 302 == client.get("/search/fullName").status_code

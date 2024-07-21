@@ -51,6 +51,10 @@ src: url('Blogger_Sans.otf');
     color: black;
 }
 
+.fa-cog {
+    color: black;
+}
+
 .upperTeethChart {
     display: flex; 
     flex-direction: row;
