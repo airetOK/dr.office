@@ -1,6 +1,6 @@
-from flask import Flask, render_template, redirect, request, make_response
+from flask import Flask, render_template, redirect, request, make_response, jsonify
 from flask_jwt_extended import create_access_token, set_access_cookies
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, unset_jwt_cookies
 from flask_jwt_extended import JWTManager
 import os
 import datetime
@@ -88,6 +88,13 @@ def office():
                            total_pages=math.ceil(
                                float(pr.get_patients_count(user_id)/10)),
                            current_page=1)
+
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    resp = make_response(redirect('/login'))
+    unset_jwt_cookies(resp)
+    return resp
 
 
 @app.route("/add", methods=['POST'])
