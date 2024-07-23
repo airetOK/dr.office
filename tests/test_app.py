@@ -8,6 +8,7 @@ import repository.users_repository as ur
 import repository.patients_repository as pr
 from flask import template_rendered
 from contextlib import contextmanager
+from datetime import timedelta
 
 DB_PATH = 'tests/repository/test.db'
 
@@ -46,7 +47,7 @@ def captured_templates(app):
 @app.route("/cookie_login", methods=["GET"])
 def cookie_login():
     resp = jsonify(login=True)
-    access_token = create_access_token("user")
+    access_token = create_access_token("user", expires_delta=timedelta(days=14))
     set_access_cookies(resp, access_token)
     return resp
 
