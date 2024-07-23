@@ -1,10 +1,9 @@
-from flask import Flask, render_template, redirect, request, make_response, jsonify
-from flask_jwt_extended import create_access_token, set_access_cookies
-from flask_jwt_extended import jwt_required, get_jwt_identity, unset_jwt_cookies
-from flask_jwt_extended import JWTManager
+from flask import Flask, render_template, redirect, request, make_response
+from flask_jwt_extended import (create_access_token, set_access_cookies, 
+    jwt_required, get_jwt_identity, unset_jwt_cookies, JWTManager, get_jwt)
 import os
-import datetime
 import math
+from datetime import datetime, timedelta, timezone
 
 import repository.patients_repository as pr
 import repository.users_repository as ur
@@ -20,6 +19,22 @@ app.config["JWT_COOKIE_CSRF_PROTECT"] = True
 app.config["JWT_CSRF_CHECK_FORM"] = True
 app.config["JWT_SESSION_COOKIE"] = False
 jwt = JWTManager(app)
+
+
+@app.after_request
+def refresh_expiring_jwts(response):
+    try:
+        exp_timestamp = get_jwt()["exp"]
+        now = datetime.now(timezone.utc)
+        target_timestamp = datetime.timestamp(now + timedelta(days=3))
+        if target_timestamp > exp_timestamp:
+            access_token = create_access_token(
+                identity=get_jwt_identity(), expires_delta=timedelta(days=14))
+            response = make_response(redirect('/'))
+            set_access_cookies(response, access_token)
+        return response
+    except (RuntimeError, KeyError):
+        return response
 
 
 @jwt.expired_token_loader
@@ -50,7 +65,7 @@ def login():
     if not ur.is_user_exists(username, password):
         return make_response(render_template('login.html', message='Користувача не знайдено'), 401)
     access_token = create_access_token(
-        identity=username, expires_delta=datetime.timedelta(days=30))
+        identity=username, expires_delta=timedelta(days=14))
     response = make_response(redirect('/'))
     set_access_cookies(response, access_token)
     return response
@@ -71,7 +86,7 @@ def register():
     ur.add_user(request.form)
 
     access_token = create_access_token(
-        identity=username, expires_delta=datetime.timedelta(days=30))
+        identity=username, expires_delta=timedelta(days=14))
     response = make_response(redirect('/'))
     set_access_cookies(response, access_token)
     return response
@@ -203,7 +218,7 @@ def forget_password():
     
     ur.set_password(username, password)
     access_token = create_access_token(
-        identity=username, expires_delta=datetime.timedelta(days=30))
+        identity=username, expires_delta=timedelta(days=14))
     response = make_response(redirect('/'))
     set_access_cookies(response, access_token)
     return response
