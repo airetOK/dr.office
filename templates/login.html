@@ -50,25 +50,25 @@
 
                             <div class="mb-3">
                                 <input type="text" name="username"
-                                    class="form-control" id="Username"
+                                    class="form-control" id="login-username-input"
                                     aria-describedby="emailHelp"
                                     placeholder="Ім'я" required>
                             </div>
                             <div
                                 class="d-flex mb-3 align-items-center position-relative">
                                 <input type="password" name="password"
-                                    class="form-control" id="password"
+                                    class="form-control" id="login-password-input"
                                     placeholder="Пароль" required>
                                 <span
                                     class="position-absolute end-0 fa fa-fw fa-eye-slash"
-                                    onclick="showHidePassword(this, 'password')"></span>
+                                    onclick="showHidePassword(this, 'login-password-input')"></span>
                             </div>
                             <div class="text-center"><button id="login-btn"
                                     type="submit"
                                     class="btn btn-color px-5 w-100">Увійти</button></div>
                         </form>
                         <div class="text-center mb-3">
-                            <span>Реєстрація </span>
+                            <span title="registration">Реєстрація </span>
                             <i id="chevron-icon" class="fa fa-chevron-down"
                                 aria-hidden="true"
                                 onclick="expandRegisterForm()"></i>
@@ -80,21 +80,21 @@
                             class="card-body cardbody-color p-lg-5 register-form">
                             <div class="mb-3">
                                 <input type="text" name="username"
-                                    class="form-control" id="Username"
+                                    class="form-control" id="register-username-input"
                                     aria-describedby="emailHelp"
                                     placeholder="Ім'я" required>
                             </div>
                             <div
                                 class="d-flex mb-3 align-items-center position-relative">
                                 <input type="password" name="password"
-                                    class="form-control" id="registerPassword"
+                                    class="form-control" id="register-password-input"
                                     placeholder="Пароль" required>
                                 <span
                                     class="position-absolute end-0 fa fa-fw fa-eye-slash"
-                                    onclick="showHidePassword(this, 'registerPassword')"></span>
+                                    onclick="showHidePassword(this, 'register-password-input')"></span>
                             </div>
                             <div class="text-center">
-                                <button id="login-btn"
+                                <button id="register-btn"
                                     type="submit"
                                     class="btn btn-color px-5 mb-5 w-100">
                                     Зареєструватись
@@ -102,7 +102,7 @@
                             </div>
                         </form>
                         <div class="text-center mb-3">
-                            <span>Забули пароль? </span>
+                            <span title="forget-password">Забули пароль? </span>
                             <i id="forget-chevron-icon"
                                 class="fa fa-chevron-down"
                                 aria-hidden="true"
@@ -115,18 +115,18 @@
                             class="card-body cardbody-color p-lg-5 forget-password-form">
                             <div class="mb-3">
                                 <input type="text" name="username"
-                                    class="form-control" id="Username"
+                                    class="form-control" id="forget-username-input"
                                     aria-describedby="emailHelp"
                                     placeholder="Ім'я" required>
                             </div>
                             <div
                                 class="d-flex mb-3 align-items-center position-relative">
                                 <input type="password" name="password"
-                                    class="form-control" id="forgetPassword"
+                                    class="form-control" id="forget-password-input"
                                     placeholder="Новий пароль" required>
                                 <span
                                     class="position-absolute end-0 fa fa-fw fa-eye-slash"
-                                    onclick="showHidePassword(this, 'forgetPassword')"></span>
+                                    onclick="showHidePassword(this, 'forget-password-input')"></span>
                             </div>
                             <div class="text-center">
                                 <button id="forget-password-btn"
