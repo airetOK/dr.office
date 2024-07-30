@@ -1,56 +1,42 @@
-import re
-from playwright.sync_api import sync_playwright, expect, Playwright, Browser, Page
+from playwright.sync_api import expect, Playwright, Page
 
 
 BASE_URL = 'http://localhost:5002'
 
-
-def open_close_browsers(func):
+def browser(test_func):
     def inner(playwright: Playwright):
-        chrome_browser = playwright.chromium.launch(
+        browser = playwright.chromium.launch(
             headless=False,
             slow_mo=1000)
-        func(chrome_browser)
-        chrome_browser.close()
+        page = browser.new_page()
+        test_func(page)
+        browser.close()
     return inner
 
 
-@open_close_browsers
-def test_redirect_to_login_page(chrome_browser: Browser):
-    expect(__login_page(chrome_browser)).to_have_url(
-        re.compile(f'{BASE_URL}/login'))
+@browser
+def test_check_tags_on_login_page(page: Page):
+    page.goto(BASE_URL)
+    assert page.locator('#login-username-input').is_visible()
+    assert page.locator('#login-password-input').is_visible()
+    expect(page.locator('#login-btn')).to_have_text('Увійти')
 
+    page.locator('id=chevron-icon').click()
+    page.locator('id=chevron-icon').click()
+    assert page.locator('#register-username-input').is_visible()
+    assert page.locator('#register-password-input').is_visible()
+    expect(page.get_by_title('registration')).to_have_text('Реєстрація')
 
-@open_close_browsers
-def test_add_patient(chrome_browser: Browser):
-    page = __login_page(chrome_browser)
-    page = __login(page)
-    page.locator('.fa-plus-circle').click()
-    page.locator('#fullNameInput').fill('TestUser')
-    page.locator('#savePatient').click(force=True)
+    page.locator('id=chevron-icon').click()
+    assert not page.locator('#register-username-input').is_visible()
+    assert not page.locator('#register-password-input').is_visible()
 
+    page.locator('id=forget-chevron-icon').click()
+    page.locator('id=forget-chevron-icon').click()
+    assert page.locator('#forget-username-input').is_visible()
+    assert page.locator('#forget-password-input').is_visible()
+    expect(page.get_by_title('forget-password')).to_have_text('Забули пароль?')
 
-@open_close_browsers
-def test_add_patients_and_move_to_page_2(chrome_browser: Browser):
-    page = __login_page(chrome_browser)
-    page = __login(page)
-    for i in range(11):
-        page.locator('.fa-plus-circle').click()
-        page.locator('#fullNameInput').fill('TestUser')
-        page.locator('#savePatient').click(force=True)
-
-    page.locator('.fa-arrow-right').click()
-
-
-def __login_page(browser: Browser):
-    context = browser.new_context()
-    page = context.new_page()
-    page.goto(f'{BASE_URL}')
-    return page
-
-
-def __login(page: Page):
-    page.locator('#Username').fill('user')
-    page.locator('#password').fill('test')
-    page.get_by_role('button').click()
-    return page
+    page.locator('id=forget-chevron-icon').click()
+    assert not page.locator('#forget-username-input').is_visible()
+    assert not page.locator('#forget-password-input').is_visible()
