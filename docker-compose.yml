@@ -11,7 +11,10 @@ services:
     ports:
       - 5000:8000
   dr.office-e2e:
-    image: dr.office
+    build:
+      context: .
+      dockerfile: tests/e2e/Dockerfile
+    image: dr.office-e2e
     container_name: dr.office-e2e
     environment:
       - PYTHONUNBUFFERED=1

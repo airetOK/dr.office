@@ -222,6 +222,3 @@ def forget_password():
     response = make_response(redirect('/'))
     set_access_cookies(response, access_token)
     return response
-
-if __name__ == "__main__":
-    app.run(debug=True)

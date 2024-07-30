@@ -6,6 +6,10 @@ i:hover {
     transform: scale(1.2);
 }
 
+#register-btn:hover {
+    transform: scale(1.2);
+}
+
 #forget-password-btn:hover {
     transform: scale(1.2);
 }
