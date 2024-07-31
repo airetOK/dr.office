@@ -3,10 +3,10 @@ import sqlite3
 import repository.patients_repository as pr
 import repository.users_repository as ur
 import os
-import logging
+from util.log_config import load_log_config
 
 
-logger = logging.getLogger(__name__)
+logger = load_log_config(__name__)
 DB_PATH = 'tests/repository/test.db'
 
 @pytest.fixture
