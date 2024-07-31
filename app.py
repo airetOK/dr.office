@@ -4,15 +4,19 @@ from flask_jwt_extended import (create_access_token, set_access_cookies,
 import os
 import math
 from datetime import datetime, timedelta, timezone
+from functools import wraps
 
 import repository.patients_repository as pr
 import repository.users_repository as ur
 from util.language import get_language_names
 from util.users_validation import UsersValidation
+from util.log_config import load_log_config
 from dotenv import load_dotenv
 
+'''Load env variables'''
 load_dotenv()
 
+'''Configure the Flask app and JWT token'''
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')
 app.config["JWT_COOKIE_CSRF_PROTECT"] = True
@@ -20,6 +24,15 @@ app.config["JWT_CSRF_CHECK_FORM"] = True
 app.config["JWT_SESSION_COOKIE"] = False
 jwt = JWTManager(app)
 
+'''Load custom logger'''
+logger = load_log_config(__name__)
+
+def request_log(func):
+    @wraps(func)
+    def inner(*args, **kwargs):
+        logger.info(f"User: {get_jwt_identity()}, method: {request.method}, url: {request.url}")
+        return func(*args, **kwargs)
+    return inner
 
 @app.after_request
 def refresh_expiring_jwts(response):
@@ -94,6 +107,7 @@ def register():
 
 @app.route("/")
 @jwt_required(locations=['cookies'])
+@request_log
 def office():
     user_id = ur.get_id_by_username(get_jwt_identity())
     return render_template("office.html",
@@ -114,6 +128,7 @@ def logout():
 
 @app.route("/add", methods=['POST'])
 @jwt_required(locations=['cookies'])
+@request_log
 def add_patient():
     user_id = ur.get_id_by_username(get_jwt_identity())
     pr.add_patient(request.form, user_id)
@@ -122,6 +137,7 @@ def add_patient():
 
 @app.route("/update/<id>", methods=['GET', 'POST'])
 @jwt_required(locations=['cookies'])
+@request_log
 def update_patient(id):
     user_id = ur.get_id_by_username(get_jwt_identity())
     if request.method == 'GET':
@@ -133,6 +149,7 @@ def update_patient(id):
 
 @app.route("/delete/<id>")
 @jwt_required(locations=['cookies'])
+@request_log
 def delete_patient(id):
     user_id = ur.get_id_by_username(get_jwt_identity())
     pr.delete_patient(id, user_id)
@@ -141,6 +158,7 @@ def delete_patient(id):
 
 @app.route("/page/<page>")
 @jwt_required(locations=['cookies'])
+@request_log
 def move_to_page(page):
     user_id = ur.get_id_by_username(get_jwt_identity())
     skip = int(page)*10 - 10
@@ -155,6 +173,7 @@ def move_to_page(page):
 
 @app.route("/search/<param>")
 @jwt_required(locations=['cookies'])
+@request_log
 def search_patients_by_full_name(param: str):
     user_id = ur.get_id_by_username(get_jwt_identity())
     value = request.args.get("searchValue")
@@ -178,6 +197,7 @@ def search_patients_by_full_name(param: str):
 
 @app.route("/search/<param>/page/<page>")
 @jwt_required(locations=['cookies'])
+@request_log
 def move_to_search_page(param, page):
     user_id = ur.get_id_by_username(get_jwt_identity())
     skip = int(page)*10 - 10

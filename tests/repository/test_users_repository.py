@@ -2,12 +2,12 @@ import pytest
 import sqlite3
 import repository.users_repository as ur
 import os
-import logging
+from util.log_config import load_log_config
 
 from util.password_encryptor import PasswordEncryptor
 
 
-logger = logging.getLogger(__name__)
+logger = load_log_config(__name__)
 DB_PATH = 'tests/repository/test.db'
 password_encryptor = PasswordEncryptor()
 
