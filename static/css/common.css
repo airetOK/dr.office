@@ -117,7 +117,7 @@ src: url('Blogger_Sans.otf');
     display: none;
 }
 
-#error-message {
+.error-message {
     color: red;
 }
 
