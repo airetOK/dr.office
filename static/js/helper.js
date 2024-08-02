@@ -1,9 +1,10 @@
-function appendSelectedValueToInput(inputId, selectId) {
-    const select = document.querySelector(selectId);
-    if (select.selectedIndex != 0) {
-        const selectedValue = select.options[select.selectedIndex].text;
-        const input = document.querySelector(inputId);
-        input.value += `| ${selectedValue} |`;
+function appendActionOptionsToInput() {
+    const options = document.querySelectorAll('.list-group-item');
+    const input = document.querySelector('#actionInput');
+    for (let option of options) {
+        if (option.getAttribute("data-chosen") === "1") {
+            input.value += `| ${option.innerHTML} |`
+        }
     }
 }
 
@@ -71,3 +72,14 @@ function showHidePassword(element, inputId) {
 function appendPatientIdToHref(element) {
     document.querySelector('#deleteLinkPatient').href = '/delete/' + element.getAttribute('data-patient-id');
 }
+
+function chooseAction(element) {
+    if (element.getAttribute("data-chosen") === "0") {
+        element.setAttribute("data-chosen", "1");
+        element.style.backgroundColor = "#cfcdca";
+    } else {
+        element.setAttribute("data-chosen", "0");
+        element.style.backgroundColor = "";
+    }
+}
+ 

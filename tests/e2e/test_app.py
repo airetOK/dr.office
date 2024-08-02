@@ -1,10 +1,13 @@
 from playwright.sync_api import expect, Playwright, Page
 import pytest
+import os
 import sqlite3
 from contextlib import closing
+from dotenv import load_dotenv
 
 
-BASE_URL = 'http://localhost:5002'
+load_dotenv()
+BASE_URL = os.getenv('E2E_HOST')
 USERNAME = 'user'
 PASSWORD = 'Qwerty1!'
 
@@ -12,7 +15,7 @@ def browser(test_func):
     def inner(playwright: Playwright):
         browser = playwright.chromium.launch(
             headless=False,
-            slow_mo=1000)
+            slow_mo=500)
         page = browser.new_page()
         test_func(page)
         browser.close()
@@ -21,8 +24,9 @@ def browser(test_func):
 
 @pytest.fixture(scope='module', autouse=True)
 def before_tests():
-    with closing(sqlite3.connect('patients.db')) as conn:
+    with closing(sqlite3.connect(os.getenv('DB_PATH'))) as conn:
         with conn:
+            conn.execute(f"DELETE FROM patients WHERE user_id = (SELECT id FROM users WHERE username = '{USERNAME}')")
             conn.execute(f"DELETE FROM users WHERE username = '{USERNAME}'")
             
 
@@ -76,3 +80,90 @@ def test_register_user_already_exists(page: Page):
     page.locator('#register-btn').click()
     assert page.url == f"{BASE_URL}/register"
     expect(page.locator('id=error-message')).to_have_text('Користувач з таким ім\'ям існує')
+
+
+@browser
+def test_save_patient(page: Page):
+    page.goto(BASE_URL)
+    page.locator('#login-username-input').fill(USERNAME)
+    page.locator('#login-password-input').fill(PASSWORD)
+    page.locator('#login-btn').click()
+    page.locator('#addPatientLink').click()
+    page.locator('#fullNameInput').fill('Test patient');
+    page.locator('#selectActionOptionsLink').click()
+    page.query_selector_all('.list-group-item')[2].click()
+    page.locator('#saveActionOptionsButton').click()
+    page.locator('#savePatient').click()
+    assert 'Test patient' == page.query_selector_all('.fullNameHeader')[0].inner_text()
+
+
+@browser
+def test_update_patient(page: Page):
+    page.goto(BASE_URL)
+    page.locator('#login-username-input').fill(USERNAME)
+    page.locator('#login-password-input').fill(PASSWORD)
+    page.locator('#login-btn').click()
+    page.query_selector_all('.updatePatientLink')[0].click()
+    page.locator('#fullNameInput').fill('Test update patient');
+    page.locator('#selectActionOptionsLink').click()
+    page.query_selector_all('.list-group-item')[4].click()
+    page.locator('#saveActionOptionsButton').click()
+    page.locator('#savePatient').click()
+    assert 'Test update patient' == page.query_selector_all('.fullNameHeader')[0].inner_text()
+
+
+@browser
+def test_search_patient(page: Page):
+    page.goto(BASE_URL)
+    page.locator('#login-username-input').fill(USERNAME)
+    page.locator('#login-password-input').fill(PASSWORD)
+    page.locator('#login-btn').click()
+    page.locator('#searchInput').fill('Test update')
+    page.locator('#searchButton').click()
+    assert page.url == f"{BASE_URL}/search/fullName?searchValue=Test+update"
+    elements = page.query_selector_all('.fullNameHeader')
+    assert 'Test update patient' == elements[0].inner_text()
+    assert 1 == len(elements)
+
+
+@browser
+def test_search_patient_and_create_patient(page: Page):
+    page.goto(BASE_URL)
+    page.locator('#login-username-input').fill(USERNAME)
+    page.locator('#login-password-input').fill(PASSWORD)
+    page.locator('#login-btn').click()
+    page.locator('#searchInput').fill('Test update')
+    page.locator('#searchButton').click()
+    assert page.url == f"{BASE_URL}/search/fullName?searchValue=Test+update"
+
+    page.locator('#addPatientLink').click()
+    page.locator('#fullNameInput').fill('Test new patient');
+    page.locator('#selectActionOptionsLink').click()
+    page.query_selector_all('.list-group-item')[3].click()
+    page.query_selector_all('.list-group-item')[4].click()
+    page.query_selector_all('.list-group-item')[5].click()
+    page.query_selector_all('.list-group-item')[6].click()
+    page.locator('#saveActionOptionsButton').click()
+    page.locator('#savePatient').click()
+    assert 'Test new patient' == page.query_selector_all('.fullNameHeader')[0].inner_text()
+    assert 'Test update patient' == page.query_selector_all('.fullNameHeader')[1].inner_text()
+
+
+@browser
+def test_search_patient_and_update_patient(page: Page):
+    page.goto(BASE_URL)
+    page.locator('#login-username-input').fill(USERNAME)
+    page.locator('#login-password-input').fill(PASSWORD)
+    page.locator('#login-btn').click()
+    page.locator('#searchInput').fill('Test new')
+    page.locator('#searchButton').click()
+    assert page.url == f"{BASE_URL}/search/fullName?searchValue=Test+new"
+
+    page.query_selector_all('.updatePatientLink')[0].click()
+    page.locator('#fullNameInput').fill('Test update new patient');
+    page.locator('#selectActionOptionsLink').click()
+    page.query_selector_all('.list-group-item')[10].click()
+    page.locator('#saveActionOptionsButton').click()
+    page.locator('#savePatient').click()
+    assert 'Test update new patient' == page.query_selector_all('.fullNameHeader')[0].inner_text()
+    
