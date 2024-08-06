@@ -5,16 +5,26 @@ import os
 import math
 from datetime import datetime, timedelta, timezone
 from functools import wraps
+from dotenv import load_dotenv
 
 import repository.patients_repository as pr
 import repository.users_repository as ur
 from util.language import get_language_names
 from util.users_validation import UsersValidation
 from util.log_config import load_log_config
-from dotenv import load_dotenv
 
 '''Load env variables'''
 load_dotenv()
+
+'''Load custom logger'''
+logger = load_log_config(__name__)
+
+'''Execute upgrade script'''
+if eval(os.getenv('EXECUTE_UPGRADE_SCRIPT')):
+    from sql.upgrade_table import upgrade_table 
+    logger.info("Start 'upgrade script' execution...")
+    upgrade_table(os.getenv('DB_PATH'))
+    logger.info("Finish 'upgrade script' execution")
 
 '''Configure the Flask app and JWT token'''
 app = Flask(__name__)
@@ -24,8 +34,6 @@ app.config["JWT_CSRF_CHECK_FORM"] = True
 app.config["JWT_SESSION_COOKIE"] = False
 jwt = JWTManager(app)
 
-'''Load custom logger'''
-logger = load_log_config(__name__)
 
 def request_log(func):
     @wraps(func)

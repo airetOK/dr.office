@@ -8,6 +8,7 @@ services:
       - PYTHONUNBUFFERED=1
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - DB_PATH=${DB_PATH}
+      - EXECUTE_UPGRADE_SCRIPT=${EXECUTE_UPGRADE_SCRIPT}
     ports:
       - 5000:8000
       
@@ -22,5 +23,6 @@ services:
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - DB_PATH=${DB_PATH}
       - E2E_HOST=${E2E_HOST}
+      - EXECUTE_UPGRADE_SCRIPT=${EXECUTE_UPGRADE_SCRIPT}
     ports:
       - 5002:8000
