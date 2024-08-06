@@ -89,12 +89,13 @@ def test_save_patient(page: Page):
     page.locator('#login-password-input').fill(PASSWORD)
     page.locator('#login-btn').click()
     page.locator('#addPatientLink').click()
-    page.locator('#fullNameInput').fill('Test patient');
+    page.locator('#fullNameInput').fill('Test patient')
     page.locator('#selectActionOptionsLink').click()
     page.query_selector_all('.list-group-item')[2].click()
     page.locator('#saveActionOptionsButton').click()
     page.locator('#savePatient').click()
     assert 'Test patient' == page.query_selector_all('.fullNameHeader')[0].inner_text()
+    assert '| Вторинне ендо (ліки) |' == page.query_selector_all('.patient-action')[0].inner_text()
 
 
 @browser
@@ -104,12 +105,13 @@ def test_update_patient(page: Page):
     page.locator('#login-password-input').fill(PASSWORD)
     page.locator('#login-btn').click()
     page.query_selector_all('.updatePatientLink')[0].click()
-    page.locator('#fullNameInput').fill('Test update patient');
+    page.locator('#fullNameInput').fill('Test update patient')
     page.locator('#selectActionOptionsLink').click()
     page.query_selector_all('.list-group-item')[4].click()
     page.locator('#saveActionOptionsButton').click()
     page.locator('#savePatient').click()
     assert 'Test update patient' == page.query_selector_all('.fullNameHeader')[0].inner_text()
+    assert '| Вторинне ендо (ліки) || Герметизація |' == page.query_selector_all('.patient-action')[0].inner_text()
 
 
 @browser
@@ -123,6 +125,7 @@ def test_search_patient(page: Page):
     assert page.url == f"{BASE_URL}/search/fullName?searchValue=Test+update"
     elements = page.query_selector_all('.fullNameHeader')
     assert 'Test update patient' == elements[0].inner_text()
+    assert '| Вторинне ендо (ліки) || Герметизація |' == page.query_selector_all('.patient-action')[0].inner_text()
     assert 1 == len(elements)
 
 
@@ -137,7 +140,7 @@ def test_search_patient_and_create_patient(page: Page):
     assert page.url == f"{BASE_URL}/search/fullName?searchValue=Test+update"
 
     page.locator('#addPatientLink').click()
-    page.locator('#fullNameInput').fill('Test new patient');
+    page.locator('#fullNameInput').fill('Test new patient')
     page.locator('#selectActionOptionsLink').click()
     page.query_selector_all('.list-group-item')[3].click()
     page.query_selector_all('.list-group-item')[4].click()
@@ -146,6 +149,7 @@ def test_search_patient_and_create_patient(page: Page):
     page.locator('#saveActionOptionsButton').click()
     page.locator('#savePatient').click()
     assert 'Test new patient' == page.query_selector_all('.fullNameHeader')[0].inner_text()
+    assert '| Вторинне ендо (ліки) || Герметизація |' == page.query_selector_all('.patient-action')[1].inner_text()
     assert 'Test update patient' == page.query_selector_all('.fullNameHeader')[1].inner_text()
 
 
@@ -160,7 +164,7 @@ def test_search_patient_and_update_patient(page: Page):
     assert page.url == f"{BASE_URL}/search/fullName?searchValue=Test+new"
 
     page.query_selector_all('.updatePatientLink')[0].click()
-    page.locator('#fullNameInput').fill('Test update new patient');
+    page.locator('#fullNameInput').fill('Test update new patient')
     page.locator('#selectActionOptionsLink').click()
     page.query_selector_all('.list-group-item')[10].click()
     page.locator('#saveActionOptionsButton').click()
