@@ -8,14 +8,21 @@ services:
       - PYTHONUNBUFFERED=1
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - DB_PATH=${DB_PATH}
+      - EXECUTE_UPGRADE_SCRIPT=${EXECUTE_UPGRADE_SCRIPT}
     ports:
       - 5000:8000
+      
   dr.office-e2e:
-    image: dr.office
+    build:
+      context: .
+      dockerfile: tests/e2e/Dockerfile
+    image: dr.office-e2e
     container_name: dr.office-e2e
     environment:
       - PYTHONUNBUFFERED=1
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - DB_PATH=${DB_PATH}
+      - E2E_HOST=${E2E_HOST}
+      - EXECUTE_UPGRADE_SCRIPT=${EXECUTE_UPGRADE_SCRIPT}
     ports:
       - 5002:8000

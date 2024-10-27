@@ -20,9 +20,16 @@
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
         <script src="../static/js/helper.js"></script>
+        <style>
+            body {
+                background-image: url(../static/images/background-image.png); 
+                background-size: 10rem; 
+                background-repeat: space;
+            }
+        </style>
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
             <div class="container-fluid">
                 <button class="navbar-toggler"
                     type="button"
@@ -35,16 +42,27 @@
                 </button>
                 <div class="collapse navbar-collapse"
                     id="navbarTogglerDemo01">
-                    <div>
-                        <a href="/">
-                            <img src="../static/images/title_pic_zoom.jpg"
-                                class="img-fluid profile-image-pic img-thumbnail rounded-circle my-3"
-                                id="logo" alt="profile">
-                        </a>
+                    <div class="d-flex justify-content-center">
+                        <div>
+                            <a href="/">
+                                <img src="../static/images/title_pic_zoom.jpg"
+                                    class="img-fluid profile-image-pic img-thumbnail rounded-circle my-3"
+                                    id="logo" alt="profile">
+                            </a>
+                        </div>
+                        <div>
+                            <a href="#"
+                                data-bs-toggle="modal"
+                                data-bs-target="#settingsModal"
+                                aria-current="page">
+                                <i class="fa fa-cog" aria-hidden="true"></i>
+                            </a>
+                        </div>
                     </div>
                     <ul class="navbar-nav mb-2 mb-lg-0">
                         <li class="nav-item">
                             <a class="nav-link active"
+                                id="addPatientLink"
                                 data-bs-toggle="modal"
                                 data-bs-target="#addPatientModal"
                                 aria-current="page"
@@ -53,269 +71,359 @@
                                     aria-hidden="true"></i>
                             </a>
                         </li>
-                        <form method="GET" action="/search" class="d-flex">
-                            <input class="form-control me-2" type="search"
-                                id="searchInput"
-                                placeholder="Введіть ім'я" name="fullName"
-                                aria-label="Search">
-                            <button class="btn btn-outline-dark"
-                                id="searchButton"
-                                type="submit">Знайти</button>
-                        </form>
+                        <li class="nav-item">
+                            <div class="mb-3">
+                                <select class="form-select"
+                                    id="searchParam"
+                                    onchange="appendOptionToSearchForm()">
+                                    <option value="fullName">Ім'я</option>
+                                    <option value="actions">Маніпуляції</option>
+                                </select>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <form method="GET"
+                                action="/search/{{ search_param }}"
+                                class="d-flex search-form">
+                                <input class="form-control me-2" type="search"
+                                    id="searchInput"
+                                    placeholder="Введіть значення"
+                                    name="searchValue"
+                                    aria-label="Search">
+                                <button class="btn btn-outline-dark"
+                                    id="searchButton"
+                                    type="submit">Знайти</button>
+                            </form>
+                        </li>
                     </ul>
                 </div>
             </div>
         </nav>
 
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-dark">
-                    <tr>
-                        <th>ПІБ</th>
-                        <th>Зуби</th>
-                        <th>Маніпуляція</th>
-                        <th>Ціна</th>
-                        <th>Коментар</th>
-                        <th>Мова</th>
-                        <th>Дата</th>
-                        <th>Дії</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for patient in patients %}
-                    <tr>
-                        <td>{{ patient['fullname'] }}</td>
-                        <td>{{ patient['teeth'] }}</td>
-                        <td>{{ patient['actions'] }}</td>
-                        <td>{{ patient['price'] }}</td>
-                        <td>{{ patient['comment'] }}</td>
-                        <td><img class="countryFlag"
-                                src="../static/svg/{{ patient['lang_svg'] }}.svg"
-                                alt="img" /></td>
-                        <td>{{ patient['date'] }}</td>
-                        <td>
-                            <a href="/delete/{{ patient['id'] }}"><i
-                                    class="fa fa-trash-o"
-                                    aria-hidden="true"></i></a>
-                            <a href="/update/{{ patient['id'] }}"><i
-                                    class="fa fa-pencil"
-                                    aria-hidden="true"></i></a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        <div class="page-container">
-            <div>
-                {% if current_page - 1 <= 0 %}
-                <a href="/page/{{ current_page - 1}}" class="disabled"><i
-                        class="fa fa-arrow-left"
-                        aria-hidden="true"></i>
-                </a>
-                {% else %}
-                <a href="/page/{{ current_page - 1}}"><i
-                        class="fa fa-arrow-left"
-                        aria-hidden="true"></i>
-                </a>
-                {% endif %}
+        {% for patient in patients %}
+        <div class="card mb-3">
+            <div class="d-flex card-header justify-content-between">
+                <div class="fullNameHeader">
+                    <h5>{{ patient['fullname'] }}</h5>
+                </div>
+                <div>
+                    <a data-bs-toggle="modal"
+                        data-bs-target="#deletePatientModal"
+                        data-patient-id="{{ patient['id'] }}"
+                        aria-current="page"
+                        onclick="appendPatientIdToHref(this)"
+                        href="#"><i
+                            class="fa fa-times fa-lg"
+                            aria-hidden="true"></i></a>
+                </div>
             </div>
-            <div>
-                {% if total_pages == 0 %}
-                    <span>Пацієнтів немає.</span>
-                {% else %}
-                    {{ current_page }}
-                {% endif %}
+            <div class="card-body container m-0">
+                <div class="row mb-2">
+                    <div
+                        class="col-4 card-title d-flex align-items-center">Зуби:</div>
+                    <div class="col-8">{{ patient['teeth'] }}</div>
+                </div>
+                <div class="row mb-2">
+                    <div
+                        class="col-4 card-title d-flex align-items-center">Маніпуляції:</div>
+                    <div class="col-8 patient-action">{{ patient['actions'] }}</div>
+                </div>
+                <div class="row mb-2">
+                    <div
+                        class="col-4 card-title d-flex align-items-center">Ціна:</div>
+                    <div class="col-8">{{ patient['price'] }}</div>
+                </div>
+                <div class="row mb-2">
+                    <div
+                        class="col-4 card-title d-flex align-items-center">Коментар:</div>
+                    <div class="col-8">{{ patient['comment'] }}</div>
+                </div>
+                <div class="row mb-2">
+                    <div
+                        class="col-4 card-title d-flex align-items-center">Мова:</div>
+                    <div class="col-8">
+                        {% if patient['lang_svg'] != "unknown" %}
+                        <img class="countryFlag"
+                            src="../static/svg/{{ patient['lang_svg'] }}.svg"
+                            alt="img" /></td>
+                    {% endif %}
+                </div>
             </div>
-            <div>
-                {% if current_page + 1 <= total_pages %}
-                <a href="/page/{{ current_page + 1}}"><i
-                        class="fa fa-arrow-right"
-                        aria-hidden="true"></i></a>
-                {% else %}
-                <a href="/page/{{ current_page + 1}}" class="disabled"><i
-                        class="fa fa-arrow-right"
-                        aria-hidden="true"></i></a>
-                {% endif %}
+            <div class="row mb-2">
+                <div
+                    class="col-4 card-title d-flex align-items-center">Дата:</div>
+                <div class="col-8">{{ patient['date'] }}</div>
             </div>
         </div>
+        <div class="card-footer text-center text-muted">
+            <a class="btn btn-outline-dark updatePatientLink"
+                href="/update/{{ patient['id'] }}">Редагувати</a>
+        </div>
+    </div>
+    {% endfor %}
 
-        <!-- modal window -->
-        <div class="modal fade" id="addPatientModal" tabindex="-1"
-            aria-labelledby="addPatientModalLabel" aria-hidden="true">
+    <div class="page-container">
+        <div>
+            {% if current_page - 1 <= 0 %}
+            <a href="/page/{{ current_page - 1}}" class="disabled"><i
+                    class="fa fa-arrow-left"
+                    aria-hidden="true"></i>
+            </a>
+            {% else %}
+            <a href="/page/{{ current_page - 1}}"><i
+                    class="fa fa-arrow-left"
+                    aria-hidden="true"></i>
+            </a>
+            {% endif %}
+        </div>
+        <div>
+            {% if total_pages == 0 %}
+            <span>Пацієнтів немає.</span>
+            {% else %}
+            {{ current_page }}
+            {% endif %}
+        </div>
+        <div>
+            {% if current_page + 1 <= total_pages %}
+            <a href="/page/{{ current_page + 1}}"><i
+                    class="fa fa-arrow-right"
+                    aria-hidden="true"></i></a>
+            {% else %}
+            <a href="/page/{{ current_page + 1}}" class="disabled"><i
+                    class="fa fa-arrow-right"
+                    aria-hidden="true"></i></a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- modal window -->
+    <div class="modal fade" id="addPatientModal" tabindex="-1"
+        aria-labelledby="addPatientModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"
+                        id="addPatientModalLabel">Додати пацієнта</h5>
+                    <button type="button" class="btn-close"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="/add">
+                    <input type="hidden" name="csrf_token" id="hidden">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="fullNameInput"
+                                class="form-label">ПІБ</label>
+                            <input type="text"
+                                name="fullName"
+                                class="form-control"
+                                id="fullNameInput"
+                                required>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="teethContainer">
+                                <label for="teethInput"
+                                    class="form-label">Зуби</label>
+                                <div>
+                                    <a class="nav-link active"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#chooseTeethModal"
+                                        aria-current="page"
+                                        href="#">
+                                        <i class="fa fa-list fa-2x"
+                                            aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                                <div>
+                                    <input type="text"
+                                        name="teeth"
+                                        class="form-control"
+                                        id="teethInput">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="actionInput"
+                                class="form-label">Маніпуляції</label>
+                            <textarea type="text"
+                                name="actions"
+                                class="form-control"
+                                id="actionInput"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <a  
+                                id="selectActionOptionsLink"
+                                data-bs-toggle="modal"
+                                data-bs-target="#selectActionOptions"
+                                class="btn btn-outline-secondary" role="button"
+                                href>Вибрати маніпуляцію</a>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="priceInput"
+                                class="form-label">Ціна</label>
+                            <input type="number"
+                                name="price"
+                                step="0.01"
+                                class="form-control"
+                                id="priceInput">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="commentInput"
+                                class="form-label">Коментар</label>
+                            <input type="text"
+                                name="comment"
+                                class="form-control"
+                                id="commentInput">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="languageInput"
+                                class="form-label">Мова</label>
+                            <input type="text"
+                                name="language"
+                                list="languages"
+                                class="form-control"
+                                id="languageInput">
+                            <datalist id="languages">
+                                {% for language in languages %}
+                                <option value="{{ language }}">
+                                    {% endfor %}
+                                </datalist>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="dateInput"
+                                    class="form-label">Дата</label>
+                                <input type="date"
+                                    name="date"
+                                    class="form-control"
+                                    id="dateInput">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button"
+                                class="btn btn-outline-danger"
+                                data-bs-dismiss="modal">Закрити</button>
+                            <button type="submit"
+                                id="savePatient"
+                                class="btn btn-outline-dark">Зберегти</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- modal choose teeth window -->
+        <div class="modal fade" id="chooseTeethModal" tabindex="-1"
+            aria-labelledby="chooseTeethModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title"
-                            id="addPatientModalLabel">Додати пацієнта</h5>
+                            id="chooseTeethModalLabel">Вибрати зуби</h5>
                         <button type="button" class="btn-close"
-                            data-bs-dismiss="modal" aria-label="Close"></button>
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                     </div>
-                    <form method="POST" action="/add">
-                        <input type="hidden" name="csrf_token" id="hidden">
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label for="fullNameInput"
-                                    class="form-label">ПІБ</label>
-                                <input type="text"
-                                    name="fullName"
-                                    class="form-control"
-                                    id="fullNameInput"
-                                    required>
-                            </div>
 
-                            <div class="mb-3">
-                                <div class="teethContainer">
-                                    <label for="teethInput"
-                                        class="form-label">Зуби</label>
-                                    <div>
-                                        <a class="nav-link active"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#chooseTeethModal"
-                                            aria-current="page"
-                                            href="#">
-                                            <i class="fa fa-list fa-2x"
-                                                aria-hidden="true"></i>
-                                        </a>
-                                    </div>
-                                    <div>
-                                        <input type="text"
-                                            name="teeth"
-                                            class="form-control"
-                                            id="teethInput">
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <div class="upperTeethChart"></div>
+                            <div class="lowerTeethChart"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-outline-dark"
+                                data-bs-dismiss="modal"
+                                aria-label="Save"
+                                onclick="saveTeeth()">Зберегти</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                            <div class="mb-3">
-                                <label for="actionInput"
-                                    class="form-label">Маніпуляції</label>
-                                <input type="text"
-                                    name="actions"
-                                    class="form-control"
-                                    id="actionInput">
-                            </div>
-                            <div class="mb-3">
-                                <select class="form-select"
-                                    id="actionSelect"
-                                    onchange="appendSelectedValueToInput('#actionInput', '#actionSelect')">
-                                    <option selected>Вибрати
-                                        маніпуляцію:</option>
-                                    <option>Анестезія</option>
-                                    <option>Вторинне ендо (ліки)</option>
-                                    <option>Вторинне ендо
-                                        (пломбування)</option>
-                                    <option>Герметизація</option>
-                                    <option>Кальцій</option>
-                                    <option>Консультація</option>
-                                    <option>Корекція реставрації</option>
-                                    <option>Кофердам</option>
-                                    <option>MTA</option>
-                                    <option>Не прийшов</option>
-                                    <option>Первинне ендо (ліки)</option>
-                                    <option>Первинне ендо
-                                        (пломбування)</option>
-                                    <option>Препарування під коронку та
-                                        зняття
-                                        відбитків</option>
-                                    <option>Професійна гігієна</option>
-                                    <option>Реставрація зуба</option>
-                                    <option>РТГ</option>
-                                    <option>Скловолоконний штифт</option>
-                                    <option>Фіксація м/к коронки</option>
-                                    <option>Фіксація цирконієвої
-                                        коронки</option>
-                                </select>
-                            </div>
+        <!-- modal delete patient window -->
+        <div class="modal fade" id="deletePatientModal" tabindex="-1"
+            aria-labelledby="chooseTeethModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"
+                            id="chooseTeethModalLabel">Видалити
+                            пацієнта?</h5>
+                        <button type="button" class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-footer">
+                        <a id="deleteLinkPatient"
+                            class="btn btn-outline-danger" role="button"
+                            href>Так</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                            <div class="mb-3">
-                                <label for="priceInput"
-                                    class="form-label">Ціна</label>
-                                <input type="number"
-                                    name="price"
-                                    step="0.01"
-                                    class="form-control"
-                                    id="priceInput">
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="commentInput"
-                                    class="form-label">Коментар</label>
-                                <input type="text"
-                                    name="comment"
-                                    class="form-control"
-                                    id="commentInput">
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="languageInput"
-                                    class="form-label">Мова</label>
-                                <input type="text"
-                                    name="language"
-                                    list="languages"
-                                    class="form-control"
-                                    id="languageInput">
-                                <datalist id="languages">
-                                    {% for language in languages %}
-                                    <option value="{{ language }}">
-                                        {% endfor %}
-                                    </datalist>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="dateInput"
-                                        class="form-label">Дата</label>
-                                    <input type="date"
-                                        name="date"
-                                        class="form-control"
-                                        id="dateInput">
-                                </div>
-                            </div>
-
-                            <div class="modal-footer">
-                                <button type="button"
-                                    class="btn btn-outline-danger"
-                                    data-bs-dismiss="modal">Закрити</button>
-                                <button type="submit"
-                                    id="savePatient"
-                                    class="btn btn-outline-dark">Зберегти</button>
-                            </div>
+        <!-- modal settings window -->
+        <div class="modal fade" id="settingsModal" tabindex="-1"
+            aria-labelledby="settingsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"
+                            id="settingsModalLabel">Налаштування</h5>
+                        <button type="button" class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-footer">
+                        <form action="/logout" method="post">
+                            <button id="logout"
+                                class="btn btn-outline-danger">
+                                <i class="fa fa-sign-out" aria-hidden="true"></i>
+                            </button>
                         </form>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- modal choose teeth window -->
-            <div class="modal fade" id="chooseTeethModal" tabindex="-1"
-                aria-labelledby="chooseTeethModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title"
-                                id="chooseTeethModalLabel">Вибрати зуби</h5>
-                            <button type="button" class="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <div class="upperTeethChart"></div>
-                                <div class="lowerTeethChart"></div>
-                            </div>
-                            <div class="modal-footer">
-                                <button class="btn btn-outline-dark"
-                                    data-bs-dismiss="modal"
-                                    aria-label="Save"
-                                    onclick="saveTeeth()">Зберегти</button>
-                            </div>
-                        </div>
+        <!-- modal select action options -->
+        <div class="modal fade" id="selectActionOptions" tabindex="-1"
+            aria-labelledby="selectActionOptionsLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"
+                            id="selectActionOptionsLabel">Вибрати
+                            маніпуляцію</h5>
+                        <button type="button" class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <ul class="list-group">
+                        {% for action in actions %}
+                            <li class="list-group-item"
+                                data-chosen="0"
+                                onclick="chooseAction(this)">{{ action }}</li>
+                        {% endfor %}
+                    </ul>
+                    <div class="modal-footer">
+                        <button class="btn btn-outline-dark"
+                            id="saveActionOptionsButton"
+                            data-bs-dismiss="modal"
+                            onclick="appendActionOptionsToInput()"
+                            aria-label="Save">Зберегти</button>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <script>
+        <script>
             document.querySelector('#hidden').value = document.cookie.split('=')[1];
             document.querySelector('#dateInput').value = new Date().toISOString().split('T')[0];
 
@@ -345,5 +453,5 @@
                 document.querySelector('.lowerTeethChart').appendChild(div);
             }
         </script>
-        </body>
-    </html>
+    </body>
+</html>

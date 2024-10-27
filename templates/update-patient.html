@@ -66,37 +66,18 @@
                 <div class="mb-3">
                     <label for="actionInput"
                         class="form-label">Маніпуляції</label>
-                    <input type="text"
+                    <textarea type="text"
                         name="actions"
                         class="form-control"
-                        id="actionInput"
-                        value="{{ patient['actions'] }}">
+                        id="actionInput">{{ patient['actions'] }}</textarea>
                 </div>
                 <div class="mb-3">
-                    <select class="form-select"
-                        id="actionSelect"
-                        onchange="appendSelectedValueToInput('#actionInput', '#actionSelect')">
-                        <option selected>Вибрати
-                            маніпуляцію:</option>
-                        <option>Анестезія</option>
-                        <option>Вторинне ендо (ліки)</option>
-                        <option>Вторинне ендо (пломбування)</option>
-                        <option>Консультація</option>
-                        <option>Корекція реставрації</option>
-                        <option>Кофердам</option>
-                        <option>MTA</option>
-                        <option>Не прийшов</option>
-                        <option>Первинне ендо (ліки)</option>
-                        <option>Первинне ендо (пломбування)</option>
-                        <option>Препарування під коронку та зняття
-                            відбитків</option>
-                        <option>Професійна гігієна</option>
-                        <option>Реставрація зуба</option>
-                        <option>Скловолоконний штифт</option>
-                        <option>Фіксація м/к коронки</option>
-                        <option>Фіксація цирконієвої
-                            коронки</option>
-                    </select>
+                    <a
+                        id="selectActionOptionsLink"
+                        data-bs-toggle="modal"
+                        data-bs-target="#selectActionOptions"
+                        class="btn btn-outline-secondary" role="button"
+                        href>Вибрати маніпуляцію</a>
                 </div>
 
                 <div class="mb-3">
@@ -150,6 +131,7 @@
                     <a href="/" class="btn btn-secondary" role="button">На
                         головну</a>
                     <button type="submit"
+                        id="savePatient"
                         class="btn btn-outline-dark">Зберегти</button>
                 </div>
             </div>
@@ -178,6 +160,37 @@
                                 aria-label="Save"
                                 onclick="saveTeeth()">Зберегти</button>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- modal select action options -->
+        <div class="modal fade" id="selectActionOptions" tabindex="-1"
+            aria-labelledby="selectActionOptionsLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"
+                            id="selectActionOptionsLabel">Вибрати
+                            маніпуляцію</h5>
+                        <button type="button" class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <ul class="list-group">
+                        {% for action in actions %}
+                            <li class="list-group-item"
+                                data-chosen="0"
+                                onclick="chooseAction(this)">{{ action }}</li>
+                        {% endfor %}
+                    </ul>
+                    <div class="modal-footer">
+                        <button class="btn btn-outline-dark"
+                            id="saveActionOptionsButton"
+                            data-bs-dismiss="modal"
+                            onclick="appendActionOptionsToInput()"
+                            aria-label="Save">Зберегти</button>
                     </div>
                 </div>
             </div>

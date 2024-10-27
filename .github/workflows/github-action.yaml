@@ -21,6 +21,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi  
       - name: Test with pytest  
         run: |  
+          export EXECUTE_UPGRADE_SCRIPT=False
           coverage run -m --source=. pytest --ignore=tests/e2e
       - name: Generate Coverage Report  
         run: |  

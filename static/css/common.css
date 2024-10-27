@@ -1,20 +1,36 @@
+html {
+    height: 100%;
+}
+
 @font-face{
 font-family: blogger-font;
 src: url('Blogger_Sans.otf');
-font-weight: bold;}
+}
 
 * {font-family: blogger-font;}
+
+.col-4 {
+    font-family: blogger-font; 
+    font-weight: bold;
+}
 
 .collapse {
     justify-content: space-between;
 }
 
 #searchInput {
-    border: 0;
     outline: 0;
     border-radius: 0px;
-    border-bottom: solid black;
-    background-color: #f8f9fa;
+    border: solid black;
+    background-color: white;
+    border-width: thin;
+}
+
+#searchParam {
+    outline: 0;
+    border-radius: 0px;
+    border: solid black;
+    background-color: white;
     border-width: thin;
 }
 
@@ -32,6 +48,10 @@ font-weight: bold;}
 }
 
 .fa-list {
+    color: black;
+}
+
+.fa-cog {
     color: black;
 }
 
@@ -66,8 +86,8 @@ font-weight: bold;}
     padding-left: 0%;
 }
 
-.fa-trash-o {
-    color: #dc143c;
+.fa-times {
+    color: #c91824;
 }
 
 .countryFlag {
@@ -93,6 +113,18 @@ font-weight: bold;}
     display: none;
 }
 
-#error-message {
+.forget-password-form {
+    display: none;
+}
+
+.error-message {
     color: red;
+}
+
+.card {
+    opacity: 0.93;
+}
+
+tbody tr {
+    line-height: 2rem;
 }

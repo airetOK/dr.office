@@ -3,10 +3,12 @@ import os
 from flask_jwt_extended import create_access_token, set_access_cookies
 from app import app
 from flask import jsonify
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, MagicMock
 import repository.users_repository as ur
+import repository.patients_repository as pr
 from flask import template_rendered
 from contextlib import contextmanager
+from datetime import timedelta
 
 DB_PATH = 'tests/repository/test.db'
 
@@ -42,12 +44,10 @@ def captured_templates(app):
 
 
 """ test function to set token in cookies """
-
-
 @app.route("/cookie_login", methods=["GET"])
 def cookie_login():
     resp = jsonify(login=True)
-    access_token = create_access_token("user")
+    access_token = create_access_token("user", expires_delta=timedelta(days=14))
     set_access_cookies(resp, access_token)
     return resp
 
@@ -133,9 +133,23 @@ def test_delete_patient(client):
     assert response.location == "/"
 
 
+@patch('repository.patients_repository.get_patients_by_full_name', MagicMock())
+@patch('repository.patients_repository.get_patients_by_actions', MagicMock())
 def test_search_patients_by_full_name(client):
     client.get("/cookie_login")
-    response = client.get("/search")
+    response = client.get("/search/fullName")
+    assert not pr.get_patients_by_actions.called
+    assert pr.get_patients_by_full_name.assert_called_once
+    assert response.status_code == 200
+
+
+@patch('repository.patients_repository.get_patients_by_full_name', MagicMock())
+@patch('repository.patients_repository.get_patients_by_actions', MagicMock())
+def test_search_patients_by_actions(client):
+    client.get("/cookie_login")
+    response = client.get("/search/actions")
+    assert pr.get_patients_by_actions.assert_called_once
+    assert not pr.get_patients_by_full_name.called
     assert response.status_code == 200
 
 
@@ -145,9 +159,9 @@ def test_get_page(client):
     assert response.status_code == 200
 
 
-def test_get_search_page(client):
+def test_get_search_page_by_full_name(client):
     client.get("/cookie_login")
-    response = client.get("/search/page/1?fullName=test")
+    response = client.get("/search/fullName/page/1?fullName=test")
     assert response.status_code == 200
 
 
@@ -236,3 +250,50 @@ def test_login_user_not_exists_template(client):
     template, context = templates[0]
     assert template.name == "login.html"
     assert context['message'] == "Користувача не знайдено"
+
+
+def test_forget_password_user_not_exists_template(client):
+    with captured_templates(app) as templates:
+        response = client.post("/forget-password", data={
+            "username": "notExists",
+            "password": "test",
+        })
+    assert response.status_code == 200
+    assert len(templates) == 1
+    template, context = templates[0]
+    assert template.name == "login.html"
+    assert context['forgetMessage'] == "Користувача з таким ім\'ям не існує"
+
+def test_forget_password_password_incorrect(client):
+    with captured_templates(app) as templates:
+        response = client.post("/forget-password", data={
+            "username": "user",
+            "password": "test",
+        })
+    assert response.status_code == 200
+    assert len(templates) == 1
+    template, context = templates[0]
+    assert template.name == "login.html"
+    assert context['forgetMessage'] == """Пароль має бути не менше за 8
+                літер та довше ніж 20 літер"""
+
+@patch('repository.users_repository.set_password', Mock())
+def test_forget_password_new_password(client):
+    with captured_templates(app) as templates:
+        response = client.post("/forget-password", data={
+            "username": "user",
+            "password": "Qwerty1!",
+        })
+    assert response.status_code == 302
+    assert ur.set_password.assert_called_once
+
+def test_logout(client):
+    client.get("/cookie_login")
+    assert 200 == client.get("/").status_code
+    assert 200 == client.get("/page/1").status_code
+    assert 200 == client.get("/search/fullName").status_code
+    response = client.post("/logout")
+    assert 302 == response.status_code
+    assert 302 == client.get("/").status_code
+    assert 302 == client.get("/page/1").status_code
+    assert 302 == client.get("/search/fullName").status_code
