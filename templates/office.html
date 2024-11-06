@@ -151,6 +151,11 @@
             </div>
             <div class="row mb-2">
                 <div
+                    class="col-4 card-title d-flex align-items-center">Телефон:</div>
+                <div class="col-8">{{ patient['phone'] }}</div>
+            </div>
+            <div class="row mb-2">
+                <div
                     class="col-4 card-title d-flex align-items-center">Дата:</div>
                 <div class="col-8">{{ patient['date'] }}</div>
             </div>
@@ -196,7 +201,7 @@
         </div>
     </div>
 
-    <!-- modal window -->
+    <!-- add patient modal window -->
     <div class="modal fade" id="addPatientModal" tabindex="-1"
         aria-labelledby="addPatientModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -292,6 +297,15 @@
                                 <option value="{{ language }}">
                                     {% endfor %}
                                 </datalist>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phoneInput"
+                                    class="form-label">Телефон</label>
+                                <input type="text"
+                                    name="phone"
+                                    class="form-control"
+                                    id="phoneInput">
                             </div>
 
                             <div class="mb-3">

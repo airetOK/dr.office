@@ -115,7 +115,17 @@
                             <option value="{{ language }}">
                         {% endfor %}
                     </datalist>
-                </div> 
+                </div>
+                
+                <div class="mb-3">
+                    <label for="phoneInput"
+                        class="form-label">Телефон</label>
+                    <input type="text"
+                        name="phone"
+                        class="form-control"
+                        id="phoneInput"
+                        value="{{ patient['phone'] }}">
+                </div>
 
                 <div class="mb-3">
                     <label for="dateInput"
