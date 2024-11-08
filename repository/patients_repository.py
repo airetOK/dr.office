@@ -76,7 +76,7 @@ def get_patients(user_id: int, skip: str) -> list[object]:
         conn = __connect(os.getenv('DB_PATH'))
         cur = conn.cursor()
         cur.execute(f'''SELECT DISTINCT
-                    p.id, p.fullName, p.teeth, p.actions, p.price, p.comment, p.language, p.phone, p.date 
+                    p.id, p.fullName, p.teeth, p.actions, p.price, p.comment, p.language, p.phone, STRFTIME('%d/%m/%Y', p.date)
                     FROM patients p 
                     JOIN users u ON p.user_id={user_id}
                     ORDER BY p.id 
@@ -99,7 +99,7 @@ def get_patients_by_full_name(full_name, skip, user_id: int) -> list[object]:
     try:
         conn = __connect(os.getenv('DB_PATH'))
         cur = conn.cursor()
-        cur.execute(f'''SELECT DISTINCT p.id, p.fullName, p.teeth, p.actions, p.price, p.comment, p.language, p.phone, p.date 
+        cur.execute(f'''SELECT DISTINCT p.id, p.fullName, p.teeth, p.actions, p.price, p.comment, p.language, p.phone, STRFTIME('%d/%m/%Y', p.date) 
                     FROM patients p
                     JOIN users u ON p.user_id={user_id}
                     WHERE p.fullName LIKE \'%{full_name}%\' 
@@ -181,7 +181,7 @@ def get_patients_by_actions(actions: str, skip: int, user_id: int) -> list[objec
     try:
         conn = __connect(os.getenv('DB_PATH'))
         cur = conn.cursor()
-        cur.execute(f'''SELECT DISTINCT p.id, p.fullName, p.teeth, p.actions, p.price, p.comment, p.language, p.phone, p.date 
+        cur.execute(f'''SELECT DISTINCT p.id, p.fullName, p.teeth, p.actions, p.price, p.comment, p.language, p.phone, STRFTIME('%d/%m/%Y', p.date) 
                     FROM patients p
                     JOIN users u ON p.user_id={user_id}
                     WHERE p.actions LIKE \'%{actions}%\' 
