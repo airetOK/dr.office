@@ -225,6 +225,52 @@ def get_patients_by_actions_count(actions, user_id: int) -> int:
     return count
 
 
+def get_patients_by_date(date, skip, user_id: int) -> list[object]:
+    try:
+        conn = __connect(os.getenv('DB_PATH'))
+        cur = conn.cursor()
+        cur.execute(f'''SELECT DISTINCT p.id, p.fullName, p.teeth, p.actions, p.price, p.comment, p.language, p.phone, STRFTIME('%d/%m/%Y', p.date) 
+                    FROM patients p
+                    JOIN users u ON p.user_id={user_id}
+                    WHERE p.date = '{date}'
+                    ORDER BY p.id DESC LIMIT {LIMIT} 
+                    OFFSET {skip}''')
+        patients = __convert(cur.fetchall())
+        logger.info(f'''The doctor with id {str(user_id)} got patients successfully 
+                    by date -> {date}. The skip parameter is {skip}''')
+    except (Exception) as error:
+        logger.error(f'''The doctor with id {str(user_id)} didn't get patients successfully 
+                    by date -> {date}. The skip parameter is {skip}. The error is: {error}''')
+    finally:
+        cur.close()
+        conn.close()
+    return patients
+
+
+def get_patients_by_date_count(date, user_id: int) -> int:
+    try:
+        conn = __connect(os.getenv('DB_PATH'))
+        cur = conn.cursor()
+        cur.execute(f'''SELECT COUNT(*) 
+                    FROM patients p
+                    WHERE p.date 
+                    LIKE \'%{date}%\'
+                    AND p.user_id={user_id}
+                    ORDER BY p.id DESC''')
+        count = cur.fetchone()[0]
+        logger.info(f'''The doctor with id {str(user_id)} 
+                    got patient's count by date successfully -> 
+                    count: {str(count)}, date: {date}''')
+    except (Exception) as error:
+        logger.error(f'''The doctor with id {str(user_id)} didn't get 
+                    patient's count by date successfully -> 
+                    count: {str(count)}, date: {date}. The error is: {error}''')
+    finally:
+        cur.close()
+        conn.close()
+    return count
+
+
 def __convert(db_list) -> list[object]:
     patients = []
     for id, fullName, teeth, actions, price, comment, language, phone, date in db_list:
