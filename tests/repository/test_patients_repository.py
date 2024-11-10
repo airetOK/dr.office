@@ -52,7 +52,17 @@ def test_get_patients_by_full_name(get_repository):
     assert 3 == len(get_repository.get_patients_by_full_name('Test', user_id=1, skip=0))
     assert 0 == len(get_repository.get_patients_by_full_name('Test', user_id=1,skip=3))
     assert 1 == len(get_repository.get_patients_by_full_name('Another', user_id=1, skip=0))
-    assert 0 == len(get_repository.get_patients_by_full_name('unknown', user_id=1, skip=0))    
+    assert 0 == len(get_repository.get_patients_by_full_name('unknown', user_id=1, skip=0))
+
+def test_get_patients_by_date(get_repository):
+    get_repository.add_patient({'fullName': 'NameTest', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'phone': '123', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'TestNameAgain', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'phone': '123', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'AnotherTestName', 'teeth': '11,12', 'actions': 'test', 'price': '120', 'comment': 'test', 'language': 'eng', 'phone': '123', 'date': '2024-01-02'}, 1)
+    assert 2 == len(get_repository.get_patients_by_date('2024-01-01', user_id=1, skip=0))
+    assert 0 == len(get_repository.get_patients_by_date('2024-01-01', user_id=1,skip=2))
+    assert 1 == len(get_repository.get_patients_by_date('2024-01-02', user_id=1, skip=0))
+    assert 0 == len(get_repository.get_patients_by_date('2024-01-03', user_id=1, skip=0))
+    assert 0 == len(get_repository.get_patients_by_date('not_date', user_id=1, skip=0))      
 
 def test_get_patient(get_repository):
     get_repository.add_patient({'fullName': 'test', 'teeth': '11,12', 'actions': 'test', 
@@ -153,6 +163,24 @@ def test_get_patients_by_full_name_count(get_repository):
     assert 1 == get_repository.get_patients_by_full_name_count('AnotherTestName', 1)
     assert 0 == get_repository.get_patients_by_full_name_count('unknown', 1)
     assert 0 == get_repository.get_patients_by_full_name_count('NameTest', 0)
+
+
+def test_get_patients_by_date_count(get_repository):
+    get_repository.add_patient({'fullName': 'NameTest', 'teeth': '11,12', 'actions': 'test', 
+                                'price': '120', 'comment': 'test', 'language': 'eng', 'phone': '123', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'TestNameAgain', 'teeth': '11,12', 'actions': 'test', 
+                                'price': '120', 'comment': 'test', 'language': 'eng', 'phone': '123', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'AnotherTestName', 'teeth': '11,12', 'actions': 'other', 
+                                'price': '120', 'comment': 'test', 'language': 'eng', 'phone': '123', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'NameTest', 'teeth': '11,12', 'actions': 'test', 
+                                'price': '120', 'comment': 'test', 'language': 'eng', 'phone': '123', 'date': '2024-01-01'}, 1)
+    get_repository.add_patient({'fullName': 'TestNameAgain', 'teeth': '11,12', 'actions': 'test', 
+                                'price': '120', 'comment': 'test', 'language': 'eng', 'phone': '123', 'date': '2024-01-02'}, 1)
+    assert 4 == get_repository.get_patients_by_date_count('2024-01-01', 1)
+    assert 1 == get_repository.get_patients_by_date_count('2024-01-02', 1)
+    assert 0 == get_repository.get_patients_by_date_count('2024-01-03', 1)
+    assert 0 == get_repository.get_patients_by_date_count('2024-01-01', 0)
+    assert 0 == get_repository.get_patients_by_date_count('not_date', 0)
 
 
 def __get_patient(id):
