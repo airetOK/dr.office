@@ -153,6 +153,16 @@ def test_search_patients_by_actions(client):
     assert response.status_code == 200
 
 
+@patch('repository.patients_repository.get_patients_by_date', MagicMock())
+@patch('repository.patients_repository.get_patients_by_actions', MagicMock())
+def test_search_patients_by_date(client):
+    client.get("/cookie_login")
+    response = client.get("/search/date")
+    assert pr.get_patients_by_date.assert_called_once
+    assert not pr.get_patients_by_actions.called
+    assert response.status_code == 200
+
+
 def test_get_page(client):
     client.get("/cookie_login")
     response = client.get("/page/1")

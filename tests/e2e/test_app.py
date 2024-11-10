@@ -4,6 +4,7 @@ import os
 import sqlite3
 from contextlib import closing
 from dotenv import load_dotenv
+from datetime import datetime
 
 
 load_dotenv()
@@ -170,4 +171,31 @@ def test_search_patient_and_update_patient(page: Page):
     page.locator('#saveActionOptionsButton').click()
     page.locator('#savePatient').click()
     assert 'Test update new patient' == page.query_selector_all('.fullNameHeader')[0].inner_text()
+
+
+@browser
+def test_search_patient_by_action(page: Page):
+    page.goto(BASE_URL)
+    page.locator('#login-username-input').fill(USERNAME)
+    page.locator('#login-password-input').fill(PASSWORD)
+    page.locator('#login-btn').click()
+    page.locator('#searchInput').fill('Герметизація')
+    page.locator('#searchParam').select_option("actions")
+    page.locator('#searchButton').click()
+    assert page.url == f"{BASE_URL}/search/actions?searchValue=%D0%93%D0%B5%D1%80%D0%BC%D0%B5%D1%82%D0%B8%D0%B7%D0%B0%D1%86%D1%96%D1%8F"
+    assert 1 == len(page.query_selector_all('.fullNameHeader'))
+
+
+@browser
+def test_search_patient_by_date(page: Page):
+    today_date = datetime.today().strftime('%d/%m/%Y')
+    page.goto(BASE_URL)
+    page.locator('#login-username-input').fill(USERNAME)
+    page.locator('#login-password-input').fill(PASSWORD)
+    page.locator('#login-btn').click()
+    page.locator('#searchInput').fill(today_date)
+    page.locator('#searchParam').select_option("date")
+    page.locator('#searchButton').click()
+    assert page.url == f"{BASE_URL}/search/date?searchValue={'%2F'.join(today_date.split('/'))}"
+    assert 2 == len(page.query_selector_all('.fullNameHeader'))
     

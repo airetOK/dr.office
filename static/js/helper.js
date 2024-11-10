@@ -52,6 +52,12 @@ function expandForgetPasswordForm() {
 function appendOptionToSearchForm() {
     const searchParam = document.getElementById("searchParam");
     const value = searchParam.value;
+    const searchInput = document.getElementById("searchInput");
+    if (value === "date") {
+        searchInput.placeholder = "день/місяць/рік";
+    } else {
+        searchInput.placeholder = "Введіть значення";
+    }
     const searchForm = document.querySelector('.search-form');
     let arr = searchForm.action.split('/');
     arr[arr.length - 1] = value;
