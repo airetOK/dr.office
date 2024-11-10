@@ -210,6 +210,21 @@ def search_patients_by_full_name(param: str):
             total_pages=math.ceil(
                 float(pr.get_patients_by_actions_count(value, user_id)/10)),
             value=value)
+    elif param == "date":
+        try:
+            date = datetime.strptime(value, "%d/%m/%Y")
+            formatted_date = date.strftime("%Y-%m-%d")
+        except Exception:
+            formatted_date = value
+        return render_template("search-office.html",
+            actions=get_actions_by_language(),
+            current_page=1,
+            languages=get_language_names(),
+            param="date",
+            patients=pr.get_patients_by_date(formatted_date, 0, user_id),
+            total_pages=math.ceil(
+                float(pr.get_patients_by_date_count(formatted_date, user_id)/10)),
+            value=value)
 
 
 @app.route("/search/<param>/page/<page>")
@@ -242,6 +257,23 @@ def move_to_search_page(param, page):
             total_pages=math.ceil(
                 float(pr.get_patients_by_actions_count(actions, user_id)/10)),
             value=actions)
+    elif param == "date":
+        date = request.args.get("date")
+        try:
+            parsed_date = datetime.strptime(date, "%d/%m/%Y")
+            formatted_date = parsed_date.strftime("%Y-%m-%d")
+        except Exception:
+            formatted_date = date
+        return render_template('search-office.html',
+            actions=get_actions_by_language(),
+            current_page=int(page),
+            languages=get_language_names(),
+            param="date",
+            patients=pr.get_patients_by_date(
+                formatted_date, str(skip), user_id),
+            total_pages=math.ceil(
+                float(pr.get_patients_by_date_count(formatted_date, user_id)/10)),
+            value=date)
 
 @app.route("/forget-password", methods=["POST"])
 def forget_password():

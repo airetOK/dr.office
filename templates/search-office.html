@@ -80,10 +80,17 @@
                                     <option selected
                                         value="fullName">Ім'я</option>
                                     <option value="actions">Маніпуляції</option>
+                                    <option value="date">Дата</option>
                                     {% elif param == "actions" %}
                                     <option selected
                                         value="actions">Маніпуляції</option>
                                     <option value="fullName">Ім'я</option>
+                                    <option value="date">Дата</option>
+                                    {% elif param == "date" %}
+                                    <option selected
+                                        value="date">Дата</option>
+                                    <option value="fullName">Ім'я</option>
+                                    <option value="actions">Маніпуляції</option>
                                     {% endif %}
                                 </select>
                             </div>
@@ -157,6 +164,11 @@
             </div>
             <div class="row mb-2">
                 <div
+                    class="col-4 card-title d-flex align-items-center">Телефон:</div>
+                <div class="col-8">{{ patient['phone'] }}</div>
+            </div>
+            <div class="row mb-2">
+                <div
                     class="col-4 card-title d-flex align-items-center">Дата:</div>
                 <div class="col-8">{{ patient['date'] }}</div>
             </div>
@@ -208,7 +220,7 @@
         </div>
     </div>
 
-    <!-- modal window -->
+    <!-- add patient modal window -->
     <div class="modal fade" id="addPatientModal" tabindex="-1"
         aria-labelledby="addPatientModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -304,6 +316,15 @@
                                 <option value="{{ language }}">
                                     {% endfor %}
                                 </datalist>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phoneInput"
+                                    class="form-label">Телефон</label>
+                                <input type="text"
+                                    name="phone"
+                                    class="form-control"
+                                    id="phoneInput">
                             </div>
 
                             <div class="mb-3">
@@ -463,6 +484,12 @@
                 div.setAttribute('onclick', 'chooseTooth(' + tooth + ')');
                 div.appendChild(img);
                 document.querySelector('.lowerTeethChart').appendChild(div);
+            }
+
+            // update placeholder if search param is date
+            const searchParam = document.getElementById("searchParam");
+            if (searchParam.value === 'date') {
+                document.getElementById("searchInput").placeholder = "день/місяць/рік";
             }
         </script>
     </body>
