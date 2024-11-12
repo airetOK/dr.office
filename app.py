@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 import repository.patients_repository as pr
 import repository.users_repository as ur
-from util.language import get_language_names
+from util.language import LanguageService
 from util.users_validation import UsersValidation
 from util.log_config import load_log_config
 from util.actions import get_actions_by_language
@@ -19,6 +19,9 @@ load_dotenv()
 
 '''Load custom logger'''
 logger = load_log_config(__name__)
+
+'''Init services'''
+lang_service = LanguageService()
 
 '''Execute upgrade script'''
 if eval(os.getenv('EXECUTE_UPGRADE_SCRIPT')):
@@ -122,7 +125,7 @@ def office():
     return render_template("office.html",
                            actions=get_actions_by_language(),
                            current_page=1,
-                           languages=get_language_names(),
+                           languages=lang_service.get_language_names(),
                            patients=pr.get_patients(user_id, skip=0),
                            search_param="fullName",
                            total_pages=math.ceil(
@@ -153,7 +156,7 @@ def update_patient(id):
     if request.method == 'GET':
         return render_template('update-patient.html',
                                actions=get_actions_by_language(),
-                               languages=get_language_names(), 
+                               languages=lang_service.get_language_names(), 
                                patient=pr.get_patient(id, user_id))
     pr.update_patient(request.form, id, user_id)
     return redirect('/')
@@ -177,7 +180,7 @@ def move_to_page(page):
     return render_template('office.html',
                            actions=get_actions_by_language(),
                            current_page=int(page),
-                           languages=get_language_names(),
+                           languages=lang_service.get_language_names(),
                            patients=pr.get_patients(user_id, skip=str(skip)),
                            search_param="fullName",
                            total_pages=math.ceil(
@@ -194,7 +197,7 @@ def search_patients_by_full_name(param: str):
         return render_template("search-office.html",
             actions=get_actions_by_language(),
             current_page=1,
-            languages=get_language_names(),
+            languages=lang_service.get_language_names(),
             param="fullName",
             patients=pr.get_patients_by_full_name(value, 0, user_id),
             total_pages=math.ceil(
@@ -204,7 +207,7 @@ def search_patients_by_full_name(param: str):
         return render_template("search-office.html",
             actions=get_actions_by_language(),
             current_page=1,
-            languages=get_language_names(),
+            languages=lang_service.get_language_names(),
             param="actions",
             patients=pr.get_patients_by_actions(value, 0, user_id),
             total_pages=math.ceil(
@@ -219,7 +222,7 @@ def search_patients_by_full_name(param: str):
         return render_template("search-office.html",
             actions=get_actions_by_language(),
             current_page=1,
-            languages=get_language_names(),
+            languages=lang_service.get_language_names(),
             param="date",
             patients=pr.get_patients_by_date(formatted_date, 0, user_id),
             total_pages=math.ceil(
@@ -238,7 +241,7 @@ def move_to_search_page(param, page):
         return render_template('search-office.html',
             actions=get_actions_by_language(),
             current_page=int(page),
-            languages=get_language_names(),
+            languages=lang_service.get_language_names(),
             param="fullName",
             patients=pr.get_patients_by_full_name(
                 full_name, str(skip), user_id),
@@ -250,7 +253,7 @@ def move_to_search_page(param, page):
         return render_template('search-office.html',
             actions=get_actions_by_language(),
             current_page=int(page),
-            languages=get_language_names(),
+            languages=lang_service.get_language_names(),
             param="actions",
             patients=pr.get_patients_by_actions(
                 actions, str(skip), user_id),
@@ -267,7 +270,7 @@ def move_to_search_page(param, page):
         return render_template('search-office.html',
             actions=get_actions_by_language(),
             current_page=int(page),
-            languages=get_language_names(),
+            languages=lang_service.get_language_names(),
             param="date",
             patients=pr.get_patients_by_date(
                 formatted_date, str(skip), user_id),
