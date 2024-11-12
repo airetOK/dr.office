@@ -16,7 +16,7 @@ def browser(test_func):
     def inner(playwright: Playwright):
         browser = playwright.chromium.launch(
             headless=False,
-            slow_mo=500)
+            slow_mo=100)
         page = browser.new_page()
         test_func(page)
         browser.close()
@@ -198,4 +198,55 @@ def test_search_patient_by_date(page: Page):
     page.locator('#searchButton').click()
     assert page.url == f"{BASE_URL}/search/date?searchValue={'%2F'.join(today_date.split('/'))}"
     assert 2 == len(page.query_selector_all('.fullNameHeader'))
+
+
+@browser
+def test_search_patient_by_empty_fullName(page: Page):
+    page.goto(BASE_URL)
+    page.locator('#login-username-input').fill(USERNAME)
+    page.locator('#login-password-input').fill(PASSWORD)
+    page.locator('#login-btn').click()
+    page.locator('#searchInput').fill("")
+    page.locator('#searchButton').click()
+    assert page.url == f"{BASE_URL}/search/fullName?searchValue="
+    assert 2 == len(page.query_selector_all('.fullNameHeader'))
     
+
+@browser
+def test_search_patient_by_empty_actions(page: Page):
+    page.goto(BASE_URL)
+    page.locator('#login-username-input').fill(USERNAME)
+    page.locator('#login-password-input').fill(PASSWORD)
+    page.locator('#login-btn').click()
+    page.locator('#searchInput').fill("")
+    page.locator('#searchParam').select_option("actions")
+    page.locator('#searchButton').click()
+    assert page.url == f"{BASE_URL}/search/actions?searchValue="
+    assert 2 == len(page.query_selector_all('.fullNameHeader'))
+
+
+@browser
+def test_search_patient_by_not_exist_fullName(page: Page):
+    page.goto(BASE_URL)
+    page.locator('#login-username-input').fill(USERNAME)
+    page.locator('#login-password-input').fill(PASSWORD)
+    page.locator('#login-btn').click()
+    page.locator('#searchInput').fill("Non exist")
+    page.locator('#searchButton').click()
+    assert page.url == f"{BASE_URL}/search/fullName?searchValue=Non+exist"
+    assert 0 == len(page.query_selector_all('.fullNameHeader'))
+    expect(page.locator('#no-patients-msg')).to_have_text('Пацієнтів немає.')
+
+
+@browser
+def test_search_patient_by_not_exist_actions(page: Page):
+    page.goto(BASE_URL)
+    page.locator('#login-username-input').fill(USERNAME)
+    page.locator('#login-password-input').fill(PASSWORD)
+    page.locator('#login-btn').click()
+    page.locator('#searchInput').fill("Non exist")
+    page.locator('#searchParam').select_option("actions")
+    page.locator('#searchButton').click()
+    assert page.url == f"{BASE_URL}/search/actions?searchValue=Non+exist"
+    assert 0 == len(page.query_selector_all('.fullNameHeader'))
+    expect(page.locator('#no-patients-msg')).to_have_text('Пацієнтів немає.')
