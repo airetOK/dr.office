@@ -1,10 +1,10 @@
 from werkzeug.datastructures import ImmutableMultiDict
 import sqlite3
 import os
-from util.language import get_svg_name_by_language
+from util.language import LanguageService
 from util.log_config import load_log_config
 
-
+lang_service = LanguageService()
 logger = load_log_config("patients_repository")
 LIMIT = 10
 
@@ -281,7 +281,7 @@ def __convert(db_list) -> list[object]:
                          'price': price,
                          'comment': comment,
                          'language': language,
-                         'lang_svg': get_svg_name_by_language(language),
+                         'lang_svg': lang_service.get_svg_name_by_language(language),
                          'phone': phone,
                          'date': date})
     return patients
